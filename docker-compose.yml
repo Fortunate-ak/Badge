@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./backend/:/app:delegated
+      - static_files:/app/staticfiles  # Mount static files volume
+      - media_files:/app/mediafiles
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8000"          # internal only
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    env_file: .env
+    environment:
+      - VITE_WATCH_POLL=true
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend/:/app:delegated
+      - /app/node_modules   # keep container node_modules to avoid host conflicts
+    working_dir: /app
+    command: ["npm", "run", "dev", "--", "--host"]  # ensure vite binds to 0.0.0.0
+    expose:
+      - "5173"
+    depends_on:
+      - web
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "8084:8084"    # single external port for everything
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_files:/app/staticfiles:ro  # Mount static files volume read-only
+      - media_files:/app/mediafiles:ro 
+    depends_on:
+      - web
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  static_files:  # Add static files volume
+  media_files:
