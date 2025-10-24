@@ -15,10 +15,10 @@ class DocumentCategory(models.Model):
 
 class Document(models.Model):
     """
-    Represents a document uploaded by a student or an institution.
+    Represents a document uploaded by an applicant or an institution.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='documents')
+    applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='documents')
     categories = models.ManyToManyField(DocumentCategory, related_name='documents')
     file_hash = models.CharField(max_length=255, help_text="Hash of the file to ensure integrity")
     storage_path = models.CharField(max_length=1024)
@@ -27,7 +27,7 @@ class Document(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Document for {self.student.email}"
+        return f"Document for {self.applicant.email}"
 
 class Verification(models.Model):
     """
@@ -46,16 +46,15 @@ class Verification(models.Model):
 
 class ConsentLog(models.Model):
     """
-    Logs student consent for sharing document categories with institutions or employers.
+    Logs applicant consent for sharing document categories with institutions.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='consent_logs')
-    requester_institution = models.ForeignKey('institutions.Institution', on_delete=models.CASCADE, null=True, blank=True, related_name='requested_consent')
-    requester_employer = models.ForeignKey('institutions.Employer', on_delete=models.CASCADE, null=True, blank=True, related_name='requested_consent')
+    applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='consent_logs')
+    requester_institution = models.ForeignKey('institutions.Institution', on_delete=models.CASCADE, related_name='requested_consent')
     document_categories = models.ManyToManyField(DocumentCategory)
     is_granted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     revoked_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Consent from {self.student.email}"
+        return f"Consent from {self.applicant.email}"

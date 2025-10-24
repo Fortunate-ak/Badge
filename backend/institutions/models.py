@@ -1,31 +1,47 @@
 from django.db import models
+from django.conf import settings
 import uuid
 
 class Institution(models.Model):
     """
-    Represents a verifying institution, such as a university, vocational school, or certification body.
+    Represents an organization, which can be a university, company, or other entity.
     """
+    INSTITUTION_CATEGORIES = [
+        ('University', 'University'),
+        ('Company', 'Company'),
+        ('Vocational School', 'Vocational School'),
+        ('Certification Body', 'Certification Body'),
+        ('Other', 'Other'),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
-    institution_type = models.CharField(max_length=100, help_text="e.g., University, Vocational School, Certification Body")
+    category = models.CharField(max_length=100, choices=INSTITUTION_CATEGORIES)
     website = models.URLField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+    profile_image = models.ImageField(upload_to='institution_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    admins = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='InstitutionStaff',
+        related_name='institutions'
+    )
 
     def __str__(self):
         return self.name
 
-class Employer(models.Model):
+class InstitutionStaff(models.Model):
     """
-    Represents an employer organization that posts opportunities.
+    Through model to represent the relationship between a User and an Institution.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    website = models.URLField(blank=True, null=True)
-    industry = models.CharField(max_length=100, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
+    is_admin = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'institution')
 
     def __str__(self):
-        return self.name
+        return f"{self.user.email} at {self.institution.name}"

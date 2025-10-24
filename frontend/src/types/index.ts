@@ -11,27 +11,25 @@ export interface User {
   is_staff: boolean;
   is_active: boolean;
   date_joined: string;
+  bio?: string;
+  profile_image?: string;
+  social_links?: Record<string, string>;
+  dob?: string;
+  is_applicant: boolean;
+  is_institution_staff: boolean;
 }
 
 /**
- * Represents an Institution (e.g., University, Vocational School).
+ * Represents an Institution (e.g., University, Company).
  */
 export interface Institution {
   id: string;
   name: string;
-  institution_type: string;
+  category: 'University' | 'Company' | 'Vocational School' | 'Certification Body' | 'Other';
   website?: string;
   address?: string;
-}
-
-/**
- * Represents an Employer organization.
- */
-export interface Employer {
-  id: string;
-  name: string;
-  website?: string;
-  industry?: string;
+  profile_image?: string;
+  admins?: string[]; // Array of User IDs
 }
 
 /**
@@ -48,7 +46,7 @@ export interface DocumentCategory {
  */
 export interface Document {
   id: string;
-  student: string; // User ID
+  applicant: string; // User ID
   categories: string[]; // Array of DocumentCategory IDs
   file_hash: string;
   storage_path: string;
@@ -75,9 +73,8 @@ export interface Verification {
  */
 export interface ConsentLog {
   id: string;
-  student: string; // User ID
-  requester_institution?: string; // Institution ID
-  requester_employer?: string; // Employer ID
+  applicant: string; // User ID
+  requester_institution: string; // Institution ID
   document_categories: string[]; // Array of DocumentCategory IDs
   is_granted: boolean;
   created_at: string;
@@ -88,12 +85,11 @@ export interface ConsentLog {
  * Represents an opportunity (Job, Program, etc.).
  */
 export interface Opportunity {
-  id: string;
+  id:string;
   title: string;
   description: string;
   opportunity_type: 'Job' | 'Program' | 'Scholarship' | 'Admission';
-  posted_by_institution?: string; // Institution ID
-  posted_by_employer?: string; // Employer ID
+  posted_by_institution: string; // Institution ID
   filters: Record<string, any>;
   tags: string[];
   created_at: string;
@@ -105,7 +101,7 @@ export interface Opportunity {
  */
 export interface Application {
   id: string;
-  student: string; // User ID
+  applicant: string; // User ID
   opportunity: string; // Opportunity ID
   status: string;
   created_at: string;
@@ -117,7 +113,7 @@ export interface Application {
  */
 export interface MatchRecord {
   id: string;
-  student: string; // User ID
+  applicant: string; // User ID
   opportunity: string; // Opportunity ID
   is_stale: boolean;
   match_percentage: number;
