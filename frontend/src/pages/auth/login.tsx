@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { FormElement } from "../../ui/layouts/form";
 import useForm from "../../ui/use-form";
 import { Link, useNavigate } from "react-router";
+import { LoginUser } from "../../utils/auth";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            //await LoginUser(values.email, values.password);
+            await LoginUser(values.email, values.password);
             // Handle successful login (e.g., redirect or show a success message)
             // navigate("/");
         } catch (error) {
