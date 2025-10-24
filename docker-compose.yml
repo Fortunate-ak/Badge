@@ -54,7 +54,7 @@ services:
   nginx:
     image: nginx:stable-alpine
     ports:
-      - "8084:8084"    # single external port for everything
+      - "8085:8085"    # single external port for everything
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - static_files:/app/staticfiles:ro  # Mount static files volume read-only
