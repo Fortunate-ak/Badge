@@ -1,11 +1,14 @@
 import './App.css'
 import { Route, Routes } from 'react-router'
+import AuthRoutes from './pages/auth'
 
 function App() {
 
   return (
     <>
-      <h1>Hello</h1>
+      <Routes>
+        {AuthRoutes()}
+      </Routes>
     </>
   )
 }

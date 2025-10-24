@@ -27,8 +27,7 @@
   --shadow-primary-rgba: 91, 60, 240;      /* rgb for --color-primary */
 }
 
-/* Dark mode semantic overrides */
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: yello) {
   :root {
     --color-background: #0b1220;           /* deep navy/dusk */
     --color-secondary: #0f1726;            /* panels in dark */
@@ -46,6 +45,7 @@
     --shadow-primary-rgba: 157, 134, 255;
   }
 }
+
 
 /* ===========================
    Map tokens into Tailwind theme namespace (v4 pattern)
@@ -79,7 +79,7 @@ html, body {
 
 /* Focus ring: subtle halo using primary */
 :root, .dark {
-  --focus-ring: 0 6px 18px color-mix(in srgb, var(--color-primary) 16%, transparent);
+  --focus-ring: 0 0 0 4px color-mix(in srgb, var(--color-accent) 12%, transparent);
 }
 
 /* LABEL */
@@ -90,11 +90,9 @@ html, body {
 
 /* INPUT (text, email, password, textarea) */
 @utility tw-input {
-  @apply w-full rounded-lg px-4 py-3 text-sm placeholder:opacity-70 transition-shadow;
+  @apply w-full rounded-lg px-4 py-3 text-sm placeholder:opacity-70 transition-shadow border border-border/50;
   background-color: var(--color-secondary); /* usually white in light mode */
   color: var(--color-foreground);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.03), inset 0 -1px 0 rgba(0,0,0,0.02);
   border-radius: 12px;
 
   /* bigger hit area like the screenshot */
@@ -204,7 +202,7 @@ html, body {
 
 /* ghost - transparent clickable text (links) */
 @utility tw-button-ghost {
-  @apply inline-flex items-center justify-center transition-colors rounded-md px-3 py-1.5 text-sm hover:[background-color:color-mix(in srgb,var(--color-muted)_36%,transparent)];
+  @apply inline-flex items-center justify-center transition-colors rounded-md px-3 py-1.5 text-sm hover:[background-color:color-mix(in_srgb,var(--color-muted)_36%,transparent)];
   background: transparent;
   color: var(--color-foreground);
   border: 1px solid transparent;
@@ -325,11 +323,4 @@ hr {
 .ghost-plate {
   background: linear-gradient(180deg, color-mix(in srgb, var(--color-secondary) 88%, transparent), transparent);
   border-radius: 16px;
-}
-
-/* small responsive adaptation for very compact buttons in tables */
-@media (max-width: 640px) {
-  @utility tw-button {
-    @apply px-4 py-2 text-sm;
-  }
 }
