@@ -59,7 +59,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
-
+    "accounts",
+    "core",
+    "api",
+    "institutions",
+    "documents",
+    "opportunities",
 ]
 
 REST_FRAMEWORK = {
@@ -167,7 +172,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# AUTH_USER_MODEL = 'core.CustomUser'
+AUTH_USER_MODEL = 'accounts.User'
 
 # Add media config
 MEDIA_URL = "/media/"
