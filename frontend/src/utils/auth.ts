@@ -1,10 +1,11 @@
 import { customFetch } from ".";
 import type { User } from "../types";
 
-export async function LoginUser(username: string, password: string) {
+export async function LoginUser(email: string, password: string) {
     let response = await customFetch('/api/auth/login/', {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password }),
     });
     if (response.status == 401) {
         throw new Error("Invalid credentials. ")
@@ -27,6 +28,7 @@ export async function LogoutUser() {
 export async function RegisterUser(email: string, password: string, first_name: string, last_name: string, bio: string, dob: string | Date, is_institution_staff: boolean) {
     let response = await customFetch('/api/auth/register/', {
         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             email,
             password,

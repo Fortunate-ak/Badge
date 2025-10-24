@@ -6,12 +6,15 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from rest_framework.permissions import AllowAny
 
 
 
 # AUTH views
 # Current User View
 @api_view(['GET'])
+@ensure_csrf_cookie
 @permission_classes([IsAuthenticated])
 def current_user_view(request):
     """
@@ -22,6 +25,7 @@ def current_user_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny]) # This overrides the default IsAuthenticated
 def api_register(request):
     email = request.data.get('email')
     password = request.data.get('password')
@@ -45,6 +49,8 @@ def api_register(request):
 
 
 @api_view(['POST'])
+@csrf_protect
+@permission_classes([AllowAny]) # This overrides the default IsAuthenticated
 def api_login(request):
     email = request.data.get('email')
     password = request.data.get('password')
