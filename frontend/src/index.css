@@ -10,15 +10,15 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
 
   /* Light mode color system (semantic) */
-  --color-background: #ffffff;             /* page background */
-  --color-secondary: #f4f6fb;              /* light panel background (slightly bluish gray) */
-  --color-muted: #eef2ff;                  /* faint surfaces / alt card backgrounds */
-  --color-border: #e6e8f3;                 /* borders */
-  --color-foreground: #0f1724;             /* main text (dark slate) */
+  --color-background: hsl(0, 0%, 98%);             /* page background */
+  --color-secondary: hsl(223, 47%, 95%);              /* light panel background (slightly bluish gray) */
+  --color-muted: hsl(226, 100%, 85%);                  /* faint surfaces / alt card backgrounds */
+  --color-border: hsl(231, 35%, 80%);                 /* borders */
+  --color-foreground: hsl(217, 41%, 5%);             /* main text (dark slate) */
   --color-subtle-text: #6b7280;            /* muted text */
 
   /* Primary / Accent (blue-ish purple) */
-  --color-primary: #5b3cf0;                /* main purple used in CTA, tiles */
+  --color-primary: #463acb;                /* main purple used in CTA, tiles */
   --color-primary-foreground: #ffffff;     /* text on primary */
   --color-accent: var(--color-primary);    /* same as primary for accents */
   --color-accent-foreground: var(--color-primary-foreground);
@@ -82,11 +82,6 @@ html, body {
   --focus-ring: 0 6px 18px color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
-/* ===========================
-   Components (tw-* classes)
-   Stylized to match the provided screenshots
-   =========================== */
-
 /* LABEL */
 @utility tw-label {
   @apply block text-sm mb-2 font-medium;
@@ -96,7 +91,7 @@ html, body {
 /* INPUT (text, email, password, textarea) */
 @utility tw-input {
   @apply w-full rounded-lg px-4 py-3 text-sm placeholder:opacity-70 transition-shadow;
-  background-color: var(--color-background); /* usually white in light mode */
+  background-color: var(--color-secondary); /* usually white in light mode */
   color: var(--color-foreground);
   border: 1px solid var(--color-border);
   box-shadow: 0 2px 6px rgba(16, 24, 40, 0.03), inset 0 -1px 0 rgba(0,0,0,0.02);
@@ -132,7 +127,7 @@ html, body {
 /* CHECKBOX */
 @utility tw-checkbox {
   @apply h-5 w-5 transition-all rounded-sm align-middle appearance-none relative inline-block;
-  background-color: var(--color-background);
+  background-color: var(--color-secondary);
   border: 1px solid var(--color-border);
   color: var(--color-primary);
   display: inline-block;
@@ -149,7 +144,7 @@ html, body {
 @utility tw-radio {
   @apply h-4 w-4 rounded-full inline-block align-middle;
   border: 1px solid var(--color-border);
-  background: var(--color-background);
+  background: var(--color-secondary);
 
   &[type="radio"] {
     appearance: none;
