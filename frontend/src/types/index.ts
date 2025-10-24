@@ -20,6 +20,16 @@ export interface User {
 }
 
 /**
+ * Represents the relationship between a User and an Institution.
+ */
+export interface InstitutionStaff {
+    user: string; // User ID
+    institution: string; // Institution ID
+    is_admin: boolean;
+    date_joined: string;
+}
+
+/**
  * Represents an Institution (e.g., University, Company).
  */
 export interface Institution {
@@ -29,7 +39,7 @@ export interface Institution {
   website?: string;
   address?: string;
   profile_image?: string;
-  admins?: string[]; // Array of User IDs
+  admins: InstitutionStaff[];
 }
 
 /**
