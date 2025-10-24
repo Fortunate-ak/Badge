@@ -19,4 +19,5 @@ router.register(r'match-records', views.MatchRecordViewSet)
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
+    path("auth/", include("accounts.urls")),
 ]
