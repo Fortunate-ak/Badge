@@ -12,7 +12,7 @@
   /* Light mode color system (semantic) */
   --color-background: hsl(0, 0%, 98%);             /* page background */
   --color-secondary: hsl(223, 47%, 95%);              /* light panel background (slightly bluish gray) */
-  --color-muted: hsl(226, 100%, 85%);                  /* faint surfaces / alt card backgrounds */
+  --color-muted: hsl(226, 100%, 75%);                  /* faint surfaces / alt card backgrounds */
   --color-border: hsl(231, 35%, 80%);                 /* borders */
   --color-foreground: hsl(217, 41%, 5%);             /* main text (dark slate) */
   --color-subtle-text: #6b7280;            /* muted text */
@@ -264,7 +264,7 @@ table *.tw-button, table *.tw-button-secondary {
 
 /* small utilities */
 @utility mso {
-  font-family: 'Material Symbols Outlined';
+  font-family: 'Material Symbols Rounded';/* Use rounded for this project */
   font-weight: normal;
   font-style: normal;
   line-height: 1;

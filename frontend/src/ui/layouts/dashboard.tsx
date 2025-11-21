@@ -12,7 +12,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
         <nav className={'h-full min-w-0 flex flex-col justify-between *:w-full *:flex *:flex-col *:gap-2 *:text-left transition-all border-r border-border ' + (navShow ? "md:w-1/18 fixed top-0 left-0 md:relative p-4 md:p-2 z-10" : "w-0! p-0! z-[-90]")}>
             <div className='p-2'>
                 <div className='flex flex-row justify-center items-center mb-2 size-10 rounded-full bg-primary place-self-center'>
-                    <h1 className='font-semibold text-xl line-clamp-1 mso text-white'>verified</h1>
+                    <h1 className='font-semibold text-xl line-clamp-1 mso filled text-white'>verified</h1>
                 </div>
                 <NavItem title="Home" icon="home" path="/" />
                 <NavItem title="Assets" icon="home_storage" path='/assets' />

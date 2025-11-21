@@ -5,3 +5,10 @@
     font-weight: 400;
     src: url(./MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].woff2) format("woff2");
 }
+
+@font-face {
+    font-family: 'Material Symbols Rounded';
+    font-style: normal;
+    font-weight: 400;
+    src: url(./MaterialSymbolsRounded[FILL,GRAD,opsz,wght].woff2) format("woff2");
+}
