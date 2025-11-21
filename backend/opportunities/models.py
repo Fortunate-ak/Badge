@@ -16,6 +16,7 @@ class Opportunity(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
+    content = models.TextField() # The full on description of the content
     opportunity_type = models.CharField(max_length=20, choices=OPPORTUNITY_TYPES)
     posted_by_institution = models.ForeignKey('institutions.Institution', on_delete=models.CASCADE, related_name='opportunities')
     filters = models.JSONField(default=dict, help_text="e.g., required qualifications, minimum GPA")

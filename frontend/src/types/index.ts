@@ -98,6 +98,7 @@ export interface Opportunity {
   id:string;
   title: string;
   description: string;
+  content:string;
   opportunity_type: 'Job' | 'Program' | 'Scholarship' | 'Admission';
   posted_by_institution: string; // Institution ID
   filters: Record<string, any>;
