@@ -12,7 +12,7 @@ let sampleContents = [
 ];
 
 export default function Consent() {
-    return <div className="grid grid-cols-4 gap-4">
+    return <div className="tw-dashboard-grid">
         {
             sampleContents.map((content, index) => <ConsentCard key={index} {...content} />)
         }

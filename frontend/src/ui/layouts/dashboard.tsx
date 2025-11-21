@@ -15,8 +15,8 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
                     <h1 className='font-semibold text-xl line-clamp-1 mso filled text-white'>verified</h1>
                 </div>
                 <NavItem title="Home (Documents)" icon="home" path="/applicant" />
-                <NavItem title="Opportunities" icon="search" path='/opportunities' />
-                <NavItem title="Consent" icon="done_outline" path='/applicant/consent' />
+                <NavItem title="Opportunities" icon="explore" path='/opportunities' />
+                <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
                 <NavItem title="Profile" icon="person" path='/profile' />
             </div>
 
@@ -28,14 +28,14 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
         <nav className='flex items-center justify-center z-10 md:hidden fixed bottom-4 w-full'>
             <div className='bg-primary *:text-white rounded-r-full rounded-l-full flex flex-row items-center justify-around gap-4 p-3 shadow-lg w-3/4'>
                 <NavItem title="Home (Documents)" icon="home" path="/applicant" />
-                <NavItem title="Opportunities" icon="search" path='/opportunities' />
-                <NavItem title="Consent" icon="done_outline" path='/applicant/consent' />
+                <NavItem title="Opportunities" icon="explore" path='/opportunities' />
+                <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
                 <NavItem title="Profile" icon="person" path='/profile' />
             </div>
         </nav>
 
         <div className='bg-background rounded-md flex flex-col transition-all flex-1 max-w-full'>
-            <header className='flex flex-row justify-between items-center p-2 pb-0'>
+            <header className='flex flex-row justify-between items-center p-2'>
                 <span className='px-1 text-sm'>{title}</span>
 
                 <div className="flex flex-row items-center gap-2">
@@ -46,7 +46,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
                 </div>
             </header>
 
-            <main className={'p-4 overflow-y-auto max-h-full flex-1 max-w-full pb-8' + className}>
+            <main className={'p-4 overflow-y-auto max-h-full flex-1 max-w-full pb-24' + className}>
                 <Outlet />
             </main>
         </div>
