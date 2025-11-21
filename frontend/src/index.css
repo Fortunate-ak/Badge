@@ -235,6 +235,10 @@ table *.tw-button, table *.tw-button-secondary {
   border-radius: 14px;
 }
 
+@utility tw-tag{
+  @apply text-xs bg-border/50 text-foreground rounded-full px-2 py-1 group-hover:text-white;
+}
+
 /* accent variant for cards (purple tiles) */
 .tw-card-accent {
   @apply rounded-xl p-6;

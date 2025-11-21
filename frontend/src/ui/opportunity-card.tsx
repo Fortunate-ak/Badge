@@ -13,7 +13,7 @@ export default function OpportunityCard({ title, description, tags, company, log
         <hr className="my-2 opacity-50" />
         <div className="flex flex-row flex-wrap gap-2">
         {
-            tags.map(tag => <span key={tag} className="text-xs bg-border/50 text-foreground rounded-full px-2 py-1 group-hover:text-white">{tag}</span>)
+            tags.map(tag => <span key={tag} className="tw-tag">{tag}</span>)
         }
         </div>
         

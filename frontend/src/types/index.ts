@@ -84,7 +84,7 @@ export interface Verification {
 export interface ConsentLog {
   id: string;
   applicant: string; // User ID
-  requester_institution: string; // Institution ID
+  requester_institution: string | Institution; // Institution ID
   document_categories: string[]; // Array of DocumentCategory IDs
   is_granted: boolean;
   created_at: string;
