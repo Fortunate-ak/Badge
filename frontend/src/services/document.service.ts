@@ -1,5 +1,5 @@
 import { customFetch } from '../utils';
-import { Document, DocumentCategory, Verification } from '../types';
+import type { Document, DocumentCategory, Verification } from '../types';
 
 const API_URL = '/api';
 

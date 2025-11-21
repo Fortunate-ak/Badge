@@ -1,5 +1,5 @@
 import { customFetch } from '../utils';
-import { User } from '../types';
+import type { User } from '../types';
 
 const API_URL = '/api';
 

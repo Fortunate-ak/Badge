@@ -1,5 +1,5 @@
 import { customFetch } from '../utils';
-import { Institution, InstitutionStaff } from '../types';
+import type { Institution, InstitutionStaff } from '../types';
 
 const API_URL = '/api';
 

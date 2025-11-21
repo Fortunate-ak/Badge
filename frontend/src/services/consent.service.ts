@@ -1,5 +1,5 @@
 import { customFetch } from '../utils';
-import { ConsentLog } from '../types';
+import type { ConsentLog } from '../types';
 
 const API_URL = '/api';
 
