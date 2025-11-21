@@ -9,21 +9,29 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
 
     return <AuthProvider><div className='dashboard-container flex flex-row w-full h-screen p-0 *:p-2'>
 
-        <nav className={'h-full min-w-0 flex flex-col justify-between *:w-full *:flex *:flex-col *:gap-2 *:text-left transition-all border-r border-border ' + (navShow ? "md:w-1/18 fixed top-0 left-0 md:relative p-4 md:p-2 z-10" : "w-0! p-0! z-[-90]")}>
+        <nav className={'h-full min-w-0 md:flex hidden flex-col justify-between *:w-full *:flex *:flex-col *:gap-2 *:text-left transition-all border-r border-border'}>
             <div className='p-2'>
                 <div className='flex flex-row justify-center items-center mb-2 size-10 rounded-full bg-primary place-self-center'>
                     <h1 className='font-semibold text-xl line-clamp-1 mso filled text-white'>verified</h1>
                 </div>
-                <NavItem title="Home" icon="home" path="/" />
-                <NavItem title="Assets" icon="home_storage" path='/assets' />
-                <NavItem title="Organisations" icon="corporate_fare" path='/organisations' />
-                <NavItem title="Agents" icon="groups" path='/agents' />
-                <NavItem title="Asset Classes" icon="interests" path='/asset-classes' />
-                <NavItem title="Departments" icon="store" path='/departments' />
+                <NavItem title="Home (Documents)" icon="home" path="/applicant" />
+                <NavItem title="Opportunities" icon="search" path='/opportunities' />
+                <NavItem title="Consent" icon="done_outline" path='/applicant/consent' />
+                <NavItem title="Profile" icon="person" path='/profile' />
             </div>
 
             <ProfileButton />
 
+        </nav>
+
+
+        <nav className='flex items-center justify-center z-10 md:hidden fixed bottom-4 w-full'>
+            <div className='bg-primary *:text-white rounded-r-full rounded-l-full flex flex-row items-center justify-around gap-4 p-3 shadow-lg w-3/4'>
+                <NavItem title="Home (Documents)" icon="home" path="/applicant" />
+                <NavItem title="Opportunities" icon="search" path='/opportunities' />
+                <NavItem title="Consent" icon="done_outline" path='/applicant/consent' />
+                <NavItem title="Profile" icon="person" path='/profile' />
+            </div>
         </nav>
 
         <div className='bg-background rounded-md flex flex-col transition-all flex-1 max-w-full'>
@@ -38,7 +46,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
                 </div>
             </header>
 
-            <main className={'p-4 overflow-y-auto max-h-full flex-1 max-w-full' + className}>
+            <main className={'p-4 overflow-y-auto max-h-full flex-1 max-w-full pb-8' + className}>
                 <Outlet />
             </main>
         </div>
@@ -53,7 +61,7 @@ function NavItem({ title, icon, path = "" }: { title: string, icon: string, path
 
     return <Link to={path} style={{
             fontVariationSettings: `'FILL' ${path == location.pathname ? 1 : 0}`
-        }} className={"py-1 px-2 rounded-md mso text-xl text-center gap-1 items-center cursor-pointer transition-colors " + (path == location.pathname ? "bg-primary text-background hover:bg-foreground" : "text-foreground hover:bg-border/50")}>
+        }} className={"py-1 px-2 rounded-md mso text-xl text-center gap-1 items-center cursor-pointer transition-colors text-foreground hover:bg-border/50"}>
         {icon}
     </Link>
 }

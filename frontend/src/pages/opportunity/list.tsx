@@ -34,7 +34,7 @@ let sampleOpportunities = [
 
 export default function Opportunities() {
     return <div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
             {sampleOpportunities.map((opportunity, index) => <OpportunityCard key={index} {...opportunity} />)}
         </div>
     </div>
