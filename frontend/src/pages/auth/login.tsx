@@ -17,7 +17,7 @@ export default function Login() {
         try {
             await LoginUser(values.email, values.password);
             // Handle successful login (e.g., redirect or show a success message)
-            // navigate("/");
+            navigate("/");
         } catch (error) {
             setError((error as Error).message);
         }

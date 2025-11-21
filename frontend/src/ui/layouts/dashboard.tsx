@@ -61,7 +61,7 @@ function NavItem({ title, icon, path = "" }: { title: string, icon: string, path
 
     return <Link to={path} style={{
             fontVariationSettings: `'FILL' ${path == location.pathname ? 1 : 0}`
-        }} className={"py-1 px-2 rounded-md mso text-xl text-center gap-1 items-center cursor-pointer transition-colors text-foreground hover:bg-border/50"}>
+        }} className={"py-1 px-2 rounded-md mso text-xl text-center gap-1 items-center cursor-pointer transition-all text-foreground hover:bg-border/50"}>
         {icon}
     </Link>
 }
@@ -70,11 +70,9 @@ function NavItem({ title, icon, path = "" }: { title: string, icon: string, path
 
 function ProfileButton() {
     const { user } = useAuth()
-    return <div className='overflow-x-clip w-full flex items-center justify-center'>
-        <button className='flex flex-row w-fit text-left gap-2'>
-            <div className='tw-button rounded-full size-8 text-lg flex items-center justify-center'>
+    return <div title={user?.first_name + " " + user?.last_name} className='overflow-x-clip w-full flex items-center justify-center'>
+            <div className='rounded-full size-8 text-sm flex items-center justify-center p-2 bg-secondary text-foreground border border-border'>
                 {user?.first_name[0]}
             </div>
-        </button>
     </div>
 }

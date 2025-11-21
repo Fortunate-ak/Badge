@@ -4,18 +4,18 @@ import { Route, Routes } from 'react-router'
 import ApplicantRoutes from './pages/applicant'
 import OpportunityRoutes from './pages/opportunity'
 import AuthRoutes from './pages/auth'
+import HomePage from './pages/home'
 
 
 function App() {
 
   return (
       <Routes>
-        {/*<Route path="/" element={<Myapp />} />*/}
+        <Route path="/" element={<HomePage />} />
         <Route element={<DashboardLayout />}>
-        {ApplicantRoutes()}
-        {OpportunityRoutes()}
-      </Route>
-
+          {ApplicantRoutes()}
+          {OpportunityRoutes()}
+        </Route>
       {AuthRoutes()}
 
     </Routes>
