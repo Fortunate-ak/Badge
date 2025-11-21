@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 import uuid
+import hashlib
 
 class DocumentCategory(models.Model):
     """
@@ -20,11 +21,21 @@ class Document(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='documents')
     categories = models.ManyToManyField(DocumentCategory, related_name='documents')
-    file_hash = models.CharField(max_length=255, help_text="Hash of the file to ensure integrity")
-    storage_path = models.CharField(max_length=1024)
+    file_hash = models.CharField(max_length=255, help_text="Hash of the file to ensure integrity", blank=True)
+    # storage_path replaced by FileField for better Django handling. Allow null for migration compatibility.
+    file = models.FileField(upload_to='documents/', max_length=1024, null=True, blank=True)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='uploaded_documents')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # Auto-calculate hash if not present and file is present
+        if self.file and not self.file_hash:
+             md5_hash = hashlib.md5()
+             for chunk in self.file.chunks():
+                 md5_hash.update(chunk)
+             self.file_hash = md5_hash.hexdigest()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Document for {self.applicant.email}"

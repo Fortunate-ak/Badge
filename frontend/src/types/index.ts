@@ -12,7 +12,7 @@ export interface User {
   is_active: boolean;
   date_joined: string;
   bio?: string;
-  profile_image?: string;
+  profile_image?: string; // URL or path
   social_links?: Record<string, string>;
   dob?: string;
   is_applicant: boolean;
@@ -23,7 +23,9 @@ export interface User {
  * Represents the relationship between a User and an Institution.
  */
 export interface InstitutionStaff {
+    id: string; // ID of the staff record
     user: string; // User ID
+    user_details?: User; // Nested user details (read-only)
     institution: string; // Institution ID
     is_admin: boolean;
     date_joined: string;
@@ -40,6 +42,8 @@ export interface Institution {
   address?: string;
   profile_image?: string;
   admins: InstitutionStaff[];
+  created_at: string;
+  updated_at: string;
 }
 
 /**
@@ -63,6 +67,7 @@ export interface Document {
   uploaded_by: string; // User ID
   created_at: string;
   updated_at: string;
+  file?: File; // Virtual field for upload
 }
 
 /**
@@ -84,7 +89,7 @@ export interface Verification {
 export interface ConsentLog {
   id: string;
   applicant: string; // User ID
-  requester_institution: string | Institution; // Institution ID
+  requester_institution: string | Institution; // Institution ID or object
   document_categories: string[]; // Array of DocumentCategory IDs
   is_granted: boolean;
   created_at: string;
@@ -95,12 +100,13 @@ export interface ConsentLog {
  * Represents an opportunity (Job, Program, etc.).
  */
 export interface Opportunity {
-  id:string;
+  id: string;
   title: string;
   description: string;
-  content:string;
+  content: string;
   opportunity_type: 'Job' | 'Program' | 'Scholarship' | 'Admission';
   posted_by_institution: string; // Institution ID
+  institution_details?: Institution; // Nested institution details (read-only)
   filters: Record<string, any>;
   tags: string[];
   created_at: string;

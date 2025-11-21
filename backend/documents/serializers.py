@@ -8,16 +8,37 @@ class DocumentCategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DocumentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Document model.
+    """
     class Meta:
         model = Document
-        fields = '__all__'
+        fields = [
+            'id', 'applicant', 'categories', 'file_hash',
+            'file', 'uploaded_by', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at', 'file_hash', 'uploaded_by']
 
 class VerificationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Verification model.
+    """
     class Meta:
         model = Verification
-        fields = '__all__'
+        fields = [
+            'id', 'document', 'institution', 'is_verified',
+            'rejection_reason', 'verified_by', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'verified_by', 'institution']
 
 class ConsentLogSerializer(serializers.ModelSerializer):
+    """
+    Serializer for ConsentLog model.
+    """
     class Meta:
         model = ConsentLog
-        fields = '__all__'
+        fields = [
+            'id', 'applicant', 'requester_institution', 'document_categories',
+            'is_granted', 'created_at', 'revoked_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'revoked_at', 'applicant']
