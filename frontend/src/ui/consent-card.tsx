@@ -1,10 +1,10 @@
 import { timeAgo } from "../utils";
 
 export default function ConsentCard({ title, tags, company, logo, timestamp } : {title:string;tags:string[];company:string;logo:string;timestamp:string;}) {
-    return <div className="rounded-lg p-4 flex flex-col gap-1 bg-primary/10 cursor-pointer transition-all **:transition-all group hover:bg-primary/90 hover:text-white">
+    return <div className="rounded-lg p-4 flex flex-col gap-1 bg-primary/10 cursor-pointer transition-all **:transition-all hover:bg-primary/20">
         <div className="flex flex-row items-start justify-between">
             {logo && <img src={logo} className="size-8 rounded-full border border-border p-1" />}
-            <span className="border border-border p-1 text-border rounded-md text-xs">
+            <span className="border border-primary p-1 text-primary rounded-md text-xs scale-80">
                 Verified
             </span>
         </div>
