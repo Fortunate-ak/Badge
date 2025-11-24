@@ -4,9 +4,10 @@ import type { Document, DocumentCategory } from "../../types";
 import MinimalModal, {type ModalHandle } from "../../ui/layouts/modal";
 import useForm from "../../ui/use-form";
 import { documentService } from "../../services/document.service";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Documents() {
-
+    const { user } = useAuth()
     const [docs, setDocs] = useState<Document[]>([]);
     const [categories, setCategories] = useState<DocumentCategory[]>([]);
     const modalRef = useRef<ModalHandle | null>(null);
@@ -14,7 +15,7 @@ export default function Documents() {
 
     const handleUpload = () => {
         modalRef.current?.close();
-        documentService.upload(values.file, values.categories, values.type).then((doc) => {
+        documentService.upload(values.file, values.title, values.categories, user?.id).then((doc) => {
             setDocs([...docs, doc]);
         }).catch((err) => {
             console.error("Error uploading document:", err);

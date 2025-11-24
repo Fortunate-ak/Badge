@@ -2,6 +2,91 @@ from django.db import models
 from django.conf import settings
 import uuid
 import hashlib
+import os
+import mimetypes
+
+
+def generate_unique_filename(instance, filename):
+    """Generate a unique file path for uploaded documents.
+
+    Path format: documents/<applicant_id_or_anonymous>/<uuid4><ext>
+    This prevents filename collisions while keeping files organized by applicant.
+    """
+    ext = os.path.splitext(filename)[1].lower()
+    applicant_part = str(getattr(instance, 'applicant_id', None) or 'anonymous')
+    unique_name = f"{uuid.uuid4().hex}{ext}"
+    return os.path.join('documents', applicant_part, unique_name)
+
+
+def detect_mime_type(uploaded_file):
+    """Detect mime type for an uploaded Django file.
+
+    Tries to use the `content_type` attribute available on UploadedFile objects
+    (e.g. InMemoryUploadedFile / TemporaryUploadedFile). Falls back to the
+    `mimetypes` module using the filename extension. Always returns a string;
+    defaults to 'application/octet-stream' when unknown.
+    """
+    # UploadedFile objects often expose .file with .content_type, or directly .content_type
+    content_type = None
+    try:
+        content_type = getattr(uploaded_file, 'content_type', None)
+    except Exception:
+        content_type = None
+
+    if not content_type:
+        try:
+            inner = getattr(uploaded_file, 'file', None)
+            content_type = getattr(inner, 'content_type', None)
+        except Exception:
+            content_type = None
+
+    if not content_type:
+        guessed, _ = mimetypes.guess_type(getattr(uploaded_file, 'name', '') or '')
+        content_type = guessed
+
+    return content_type or 'application/octet-stream'
+
+
+def compute_file_hash(uploaded_file, algorithm='md5'):
+    """Compute a hex digest for an uploaded file using the given algorithm.
+
+    This helper will attempt to iterate over `uploaded_file.chunks()` when
+    available (efficient for uploaded files) and fall back to reading the
+    whole file if necessary. It will also attempt to rewind the file pointer
+    when possible so Django can continue processing it after hashing.
+    """
+    try:
+        hasher = hashlib.new(algorithm)
+    except Exception:
+        hasher = hashlib.md5()
+
+    file_obj = getattr(uploaded_file, 'file', uploaded_file)
+
+    # If the file-like supports chunks(), use it
+    try:
+        if hasattr(uploaded_file, 'chunks'):
+            for chunk in uploaded_file.chunks():
+                hasher.update(chunk)
+        else:
+            # Read in blocks to avoid memory spikes
+            file_obj.seek(0)
+            for chunk in iter(lambda: file_obj.read(8192), b""):
+                hasher.update(chunk)
+    except Exception:
+        # As a last resort, try reading .read()
+        try:
+            file_obj.seek(0)
+            hasher.update(file_obj.read())
+        except Exception:
+            pass
+
+    # Rewind when possible
+    try:
+        file_obj.seek(0)
+    except Exception:
+        pass
+
+    return hasher.hexdigest()
 
 class DocumentCategory(models.Model):
     """
@@ -23,7 +108,8 @@ class Document(models.Model):
     categories = models.ManyToManyField(DocumentCategory, related_name='documents')
     file_hash = models.CharField(max_length=255, help_text="Hash of the file to ensure integrity", blank=True)
     # storage_path replaced by FileField for better Django handling. Allow null for migration compatibility.
-    file = models.FileField(upload_to='documents/', max_length=1024, null=True, blank=True)
+    # Use a custom upload_to to ensure unique filenames and avoid collisions.
+    file = models.FileField(upload_to=generate_unique_filename, max_length=1024, null=True, blank=True)
     title = models.CharField(max_length=255, help_text="Title of the document", blank=True)
     content = models.TextField(help_text="Content or description of the document", blank=True)
     type = models.CharField(max_length=100, help_text="Type of the document", blank=True)
@@ -33,11 +119,22 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-calculate hash if not present and file is present
-        if self.file and not self.file_hash:
-             md5_hash = hashlib.md5()
-             for chunk in self.file.chunks():
-                 md5_hash.update(chunk)
-             self.file_hash = md5_hash.hexdigest()
+        if self.file:
+            # Always set the document `type` to the detected MIME type of the file
+            try:
+                self.type = detect_mime_type(self.file)
+            except Exception:
+                # Fallback: keep whatever value exists or blank
+                if not self.type:
+                    self.type = 'application/octet-stream'
+
+            # Compute file hash if missing or empty
+            if not self.file_hash:
+                try:
+                    self.file_hash = compute_file_hash(self.file)
+                except Exception:
+                    # leave file_hash blank if hashing fails
+                    pass
         super().save(*args, **kwargs)
 
     def __str__(self):
