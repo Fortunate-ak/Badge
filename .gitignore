@@ -25,3 +25,7 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+
+wiki_giga_2024_50_MFT20_vectors_seed_123_alpha_0.75_eta_0.075_combined.txt
+
+model.bin

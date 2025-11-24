@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react"
 import OpportunityCard from "../../ui/opportunity-card"
+import type { Opportunity } from "../../types"
 
 
 let sampleOpportunities = [
@@ -33,9 +35,18 @@ let sampleOpportunities = [
 ]
 
 export default function Opportunities() {
+
+
+    const [ops, setOps] = useState<Opportunity[]>([]);
+
+
+    useEffect(() => {
+        
+    }, [])
+
     return <div>
         <div className="tw-dashboard-grid">
-            {sampleOpportunities.map((opportunity, index) => <OpportunityCard key={index} {...opportunity} />)}
+            {ops.map((opportunity, index) => <OpportunityCard key={index} title={opportunity.title} description={opportunity.description} tags={opportunity.tags} company={opportunity.institution_details?.name || ""} logo={opportunity.institution_details?.profile_image}/>)}
         </div>
     </div>
 }
