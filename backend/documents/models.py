@@ -24,6 +24,9 @@ class Document(models.Model):
     file_hash = models.CharField(max_length=255, help_text="Hash of the file to ensure integrity", blank=True)
     # storage_path replaced by FileField for better Django handling. Allow null for migration compatibility.
     file = models.FileField(upload_to='documents/', max_length=1024, null=True, blank=True)
+    title = models.CharField(max_length=255, help_text="Title of the document", blank=True)
+    content = models.TextField(help_text="Content or description of the document", blank=True)
+    type = models.CharField(max_length=100, help_text="Type of the document", blank=True)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='uploaded_documents')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

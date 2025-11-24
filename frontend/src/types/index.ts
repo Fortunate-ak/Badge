@@ -60,6 +60,9 @@ export interface DocumentCategory {
  */
 export interface Document {
   id: string;
+  title: string;
+  content?: string;
+  type: string;
   applicant: string; // User ID
   categories: string[]; // Array of DocumentCategory IDs
   file_hash: string;
