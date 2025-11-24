@@ -69,6 +69,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_applicant = models.BooleanField(default=True)
     is_institution_staff = models.BooleanField(default=False)
 
+    # Recommendation engine fields
+    interests = models.JSONField(default=list, blank=True, help_text="List of user interests or tags")
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']

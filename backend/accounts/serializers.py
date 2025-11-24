@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active',
             'date_joined', 'bio', 'profile_image', 'social_links', 'dob',
-            'is_applicant', 'is_institution_staff'
+            'is_applicant', 'is_institution_staff', 'interests'
         ]
         read_only_fields = ['id', 'email', 'is_staff', 'is_active', 'date_joined', 'is_applicant', 'is_institution_staff']
         # Roles (is_applicant, is_institution_staff) should generally not be changeable via simple profile update

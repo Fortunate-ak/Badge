@@ -17,6 +17,7 @@ export interface User {
   dob?: string;
   is_applicant: boolean;
   is_institution_staff: boolean;
+  interests?: string[]; // List of user interests
 }
 
 /**
@@ -112,6 +113,11 @@ export interface Opportunity {
   institution_details?: Institution; // Nested institution details (read-only)
   filters: Record<string, any>;
   tags: string[];
+  positive_tags?: string[];
+  negative_tags?: string[];
+  start_date?: string;
+  expiry_date?: string;
+  match_score?: number;
   created_at: string;
   updated_at: string;
 }

@@ -12,6 +12,7 @@ from accounts.models import User
 from institutions.models import Institution, InstitutionStaff
 from documents.models import DocumentCategory, Document, Verification, ConsentLog
 from opportunities.models import Opportunity, Application, MatchRecord
+from opportunities.recommendation import RecommendationEngine
 
 # Import serializers from all apps
 from accounts.serializers import UserSerializer, ChangePasswordSerializer, RegisterSerializer
@@ -219,6 +220,33 @@ class OpportunityViewSet(viewsets.ModelViewSet):
         if not InstitutionStaff.objects.filter(institution=institution, user=self.request.user).exists():
              raise serializers.ValidationError("You are not a staff member of this institution.")
         serializer.save()
+
+    @action(detail=False, methods=['get'], url_path='recommended')
+    def recommended(self, request):
+        """
+        Returns opportunities recommended for the current user.
+        Sorted by match score (highest first) and expiry date (non-expired first).
+        """
+        user = request.user
+        if not user.is_applicant:
+             return Response({'error': 'Recommendations are only for applicants.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        engine = RecommendationEngine()
+        sorted_opportunities = engine.sort_opportunities(user, queryset)
+
+        # We need to paginate the result since we are returning a list,
+        # but viewset pagination works on querysets usually.
+        # However, we have a list of objects now.
+
+        page = self.paginate_queryset(sorted_opportunities)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(sorted_opportunities, many=True)
+        return Response(serializer.data)
 
 class ApplicationViewSet(viewsets.ModelViewSet):
     """

@@ -8,15 +8,17 @@ class OpportunitySerializer(serializers.ModelSerializer):
     Serializer for Opportunity model.
     """
     institution_details = InstitutionSerializer(source='posted_by_institution', read_only=True)
+    match_score = serializers.FloatField(read_only=True, required=False)
 
     class Meta:
         model = Opportunity
         fields = [
             'id', 'title', 'description', 'content', 'opportunity_type',
             'posted_by_institution', 'institution_details', 'filters', 'tags',
-            'created_at', 'updated_at'
+            'positive_tags', 'negative_tags', 'start_date', 'expiry_date',
+            'created_at', 'updated_at', 'match_score'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'posted_by_institution', 'institution_details']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'posted_by_institution', 'institution_details', 'match_score']
 
 class ApplicationSerializer(serializers.ModelSerializer):
     """
