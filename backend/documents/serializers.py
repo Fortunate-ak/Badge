@@ -42,3 +42,14 @@ class ConsentLogSerializer(serializers.ModelSerializer):
             'is_granted', 'created_at', 'revoked_at'
         ]
         read_only_fields = ['id', 'created_at', 'revoked_at', 'applicant']
+
+
+class DocumentCategorySerializer(serializers.ModelSerializer):
+    """
+    Serializer to represent DocumentCategory
+    """
+
+    class Meta:
+        model = DocumentCategory
+        fields = ['id', 'name', 'description']
+        read_only_fields = ['id', 'name', 'description']

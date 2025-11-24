@@ -1,4 +1,5 @@
 import { customFetch } from '../utils';
+import { unwrapList } from './common';
 import type { Institution, InstitutionStaff } from '../types';
 
 const API_URL = '/api';
@@ -12,7 +13,8 @@ export const institutionService = {
       method: 'GET',
     });
     if (!response.ok) throw await response.json();
-    return response.json();
+    const data = await response.json();
+    return unwrapList<Institution>(data);
   },
 
   /**
@@ -76,11 +78,12 @@ export const institutionService = {
   /**
    * Gets all staff for an institution (or all accessible staff relationships).
    */
-  async getStaff(): Promise<InstitutionStaff[]> {
+    async getStaff(): Promise<InstitutionStaff[]> {
       const response = await customFetch(`${API_URL}/institution-staff/`, {
-          method: 'GET',
+        method: 'GET',
       });
       if (!response.ok) throw await response.json();
-      return response.json();
-  }
+      const data = await response.json();
+      return unwrapList<InstitutionStaff>(data);
+    }
 };

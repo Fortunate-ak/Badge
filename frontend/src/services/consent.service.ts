@@ -1,4 +1,5 @@
 import { customFetch } from '../utils';
+import { unwrapList } from './common';
 import type { ConsentLog } from '../types';
 
 const API_URL = '/api';
@@ -12,7 +13,8 @@ export const consentService = {
       method: 'GET',
     });
     if (!response.ok) throw await response.json();
-    return response.json();
+    const data = await response.json();
+    return unwrapList<ConsentLog>(data);
   },
 
   /**

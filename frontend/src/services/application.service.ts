@@ -1,4 +1,5 @@
 import { customFetch } from '../utils';
+import { unwrapList } from './common';
 import type { Application } from '../types';
 
 const API_URL = '/api';
@@ -12,7 +13,8 @@ export const applicationService = {
       method: 'GET',
     });
     if (!response.ok) throw await response.json();
-    return response.json();
+    const data = await response.json();
+    return unwrapList<Application>(data);
   },
 
   /**

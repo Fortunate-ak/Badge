@@ -1,4 +1,5 @@
 import { customFetch } from '../utils';
+import { unwrapList } from './common';
 import type { Document, DocumentCategory, Verification } from '../types';
 
 const API_URL = '/api';
@@ -12,7 +13,8 @@ export const documentService = {
       method: 'GET',
     });
     if (!response.ok) throw await response.json();
-    return response.json();
+    const data = await response.json();
+    return unwrapList<Document>(data);
   },
 
   /**
@@ -23,7 +25,8 @@ export const documentService = {
       method: 'GET',
     });
     if (!response.ok) throw await response.json();
-    return response.json();
+    const data = await response.json();
+    return unwrapList<DocumentCategory>(data);
   },
 
   /**
