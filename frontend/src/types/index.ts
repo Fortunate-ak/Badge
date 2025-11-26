@@ -120,6 +120,7 @@ export interface Opportunity {
   match_score?: number;
   created_at: string;
   updated_at: string;
+  applicant_count?: number;
 }
 
 /**
@@ -127,8 +128,8 @@ export interface Opportunity {
  */
 export interface Application {
   id: string;
-  applicant: string; // User ID
-  opportunity: string; // Opportunity ID
+  applicant: User; // User ID
+  opportunity: Opportunity; // Opportunity ID
   status: string;
   created_at: string;
   updated_at: string;

@@ -8,14 +8,29 @@ export const applicationService = {
   /**
    * Fetches all applications for the current user (or institution).
    */
-  async getAll(): Promise<Application[]> {
-    const response = await customFetch(`${API_URL}/applications/`, {
-      method: 'GET',
+  async getAll(opportunityId?: string): Promise<Application[]> {
+    const url = opportunityId
+        ? `${API_URL}/applications/?opportunity=${opportunityId}`
+        : `${API_URL}/applications/`;
+    const response = await customFetch(url, {
+        method: 'GET',
     });
     if (!response.ok) throw await response.json();
     const data = await response.json();
     return unwrapList<Application>(data);
-  },
+    },
+
+  /**
+   * Fetches a single application by ID.
+   */
+
+  async get(id: string): Promise<Application> {
+    const response = await customFetch(`${API_URL}/applications/${id}/`, {
+        method: 'GET',
+    });
+    if (!response.ok) throw await response.json();
+    return response.json();
+    },
 
   /**
    * Applies to an opportunity.

@@ -1,65 +1,38 @@
-import { customFetch } from '../utils';
-import { unwrapList } from './common';
-import type { ConsentLog } from '../types';
+import customFetch from "../utils";
+import type { ConsentLog } from "../types";
+import { unwrapList } from "./common";
 
-const API_URL = '/api';
+const API_URL = "/api";
 
-export const consentService = {
-  /**
-   * Fetches all consent logs.
-   */
-  async getAll(): Promise<ConsentLog[]> {
-    const response = await customFetch(`${API_URL}/consent-logs/`, {
-      method: 'GET',
-    });
-    if (!response.ok) throw await response.json();
-    const data = await response.json();
-    return unwrapList<ConsentLog>(data);
-  },
+const ConsentService = {
+    getAll: async (): Promise<ConsentLog[]> => {
+        const response = await customFetch(`${API_URL}/consents/`, {
+            method: "GET",
+        });
+        if (!response.ok) throw await response.json();
+        const data = await response.json();
+        return unwrapList<ConsentLog>(data);
+    },
 
-  /**
-   * Requests consent (Institution).
-   */
-  async request(applicantId: string, institutionId: string, categories: string[]): Promise<ConsentLog> {
-    const response = await customFetch(`${API_URL}/consent-logs/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        applicant: applicantId,
-        requester_institution: institutionId,
-        document_categories: categories,
-        is_granted: false // Default to false until user approves
-      }),
-    });
-    if (!response.ok) throw await response.json();
-    return response.json();
-  },
+    get: async (id: string): Promise<ConsentLog> => {
+        const response = await customFetch(`${API_URL}/consents/${id}/`, {
+            method: "GET",
+        });
+        if (!response.ok) throw await response.json();
+        return response.json();
+    },
 
-  /**
-   * Grants consent (Applicant).
-   * Usually updating an existing request to is_granted=true
-   */
-  async grant(consentId: string): Promise<ConsentLog> {
-      const response = await customFetch(`${API_URL}/consent-logs/${consentId}/`, {
-          method: 'PATCH',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ is_granted: true }),
-      });
-      if (!response.ok) throw await response.json();
-      return response.json();
-  },
-
-  /**
-   * Revokes consent.
-   */
-  async revoke(consentId: string): Promise<void> {
-    const response = await customFetch(`${API_URL}/consent-logs/${consentId}/revoke/`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw await response.json();
-  }
+    create: async (data: Partial<ConsentLog>): Promise<ConsentLog> => {
+        const response = await customFetch(`${API_URL}/consents/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) throw await response.json();
+        return response.json();
+    },
 };
+
+export default ConsentService;

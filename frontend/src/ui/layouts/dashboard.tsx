@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Outlet, useLocation, Link, useNavigate } from "react-router";
 import { AuthProvider, useAuth } from '../../context/AuthContext';
+import type { User } from '../../types';
 
 export default function Dashboard({ title = "Search Here", className = "" }: { title?: string, className?: string }) {
-    const [navShow, setNavShow] = useState(true);
     const navigate = useNavigate()
+    const { user } = useAuth()
 
 
     return <AuthProvider><div className='dashboard-container flex flex-row w-full h-screen p-0 *:p-2'>
@@ -14,10 +15,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
                 <div className='flex flex-row justify-center items-center mb-2 size-10 rounded-full bg-primary place-self-center'>
                     <h1 className='font-semibold text-xl line-clamp-1 mso filled text-white'>verified</h1>
                 </div>
-                <NavItem title="Home (Documents)" icon="home" path="/applicant" />
-                <NavItem title="Opportunities" icon="explore" path='/opportunities' />
-                <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
-                <NavItem title="Profile" icon="person" path='/profile' />
+                <Navigations user={user} />
             </div>
 
             <ProfileButton />
@@ -27,10 +25,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
 
         <nav className='flex items-center justify-center z-10 md:hidden fixed bottom-4 w-full'>
             <div className='bg-primary *:text-white rounded-r-full rounded-l-full flex flex-row items-center justify-around gap-4 p-3 shadow-lg w-3/4'>
-                <NavItem title="Home (Documents)" icon="home" path="/applicant" />
-                <NavItem title="Opportunities" icon="explore" path='/opportunities' />
-                <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
-                <NavItem title="Profile" icon="person" path='/profile' />
+                <Navigations user={user} />
             </div>
         </nav>
 
@@ -56,12 +51,34 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
 }
 
 
+function Navigations({ user }: { user: User | null }) {
+    // applicant
+    if (user && !user.is_institution_staff) return <>
+        <NavItem title="Home (Documents)" icon="home" path="/applicant" />
+        <NavItem title="Opportunities" icon="explore" path='/opportunities' />
+        <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
+        <NavItem title="Profile" icon="person" path='/profile' />
+    </>
+
+    // institution
+    else if (user && user.is_institution_staff) return <>
+        <NavItem title="Home (Opportunities)" icon="home" path="/institution" />
+        <NavItem title="Applicants" icon="group" path='/institution/applicants' />
+        <NavItem title="Consent" icon="order_approve" path='/institution/consent' />
+        <NavItem title="Profile" icon="person" path='/profile' />
+    </>
+
+
+    else return <></>
+}
+
+
 function NavItem({ title, icon, path = "" }: { title: string, icon: string, path?: string }) {
     const location = useLocation();
 
-    return <Link to={path} style={{
-            fontVariationSettings: `'FILL' ${path == location.pathname ? 1 : 0}`
-        }} className={"py-1 px-2 rounded-md mso text-xl text-center gap-1 items-center cursor-pointer transition-all text-foreground hover:bg-border/50"}>
+    return <Link to={path} title={title} style={{
+        fontVariationSettings: `'FILL' ${path == location.pathname ? 1 : 0}`
+    }} className={"py-1 px-2 rounded-md mso text-xl text-center gap-1 items-center cursor-pointer transition-all text-foreground hover:bg-border/50"}>
         {icon}
     </Link>
 }
