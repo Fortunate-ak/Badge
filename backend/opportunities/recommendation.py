@@ -7,6 +7,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Monkeypatch numpy.float to float to support older libraries like word2vec
+if not hasattr(np, 'float'):
+    np.float = float
+
 # Path to the word2vec binary model
 # User mentioned they will update the path, so we default to 'model.bin' in the project root or similar.
 WORD2VEC_MODEL_PATH = getattr(settings, 'WORD2VEC_MODEL_PATH', 'model.bin')

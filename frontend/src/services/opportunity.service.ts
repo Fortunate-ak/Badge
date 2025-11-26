@@ -66,5 +66,18 @@ export const opportunityService = {
         method: 'DELETE',
     });
     if (!response.ok) throw await response.json();
+  },
+
+
+  /**
+   * Get recommended opportunities for a user.
+   */
+  async getRecommended(): Promise<Opportunity[]> {
+    const response = await customFetch(`${API_URL}/opportunities/recommended/`, {
+      method: 'GET',
+    });
+    if (!response.ok) throw await response.json();
+    const data = await response.json();
+    return unwrapList<Opportunity>(data);
   }
 };

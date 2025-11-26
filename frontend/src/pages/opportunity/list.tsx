@@ -1,48 +1,25 @@
 import { useEffect, useState } from "react"
 import OpportunityCard from "../../ui/opportunity-card"
 import type { Opportunity } from "../../types"
-
-
-let sampleOpportunities = [
-    {
-        title: "Frontend Developer",
-        description: "We are looking for a frontend developer to join our team.",
-        tags: ["React", "TypeScript", "CSS"],
-        company: "Tech Corp",
-        logo: "https://www.svgrepo.com/show/353822/google-pay-icon.svg",
-    },
-    {
-        title: "Backend Developer",
-        description: "We are looking for a backend developer to join our team.",
-        tags: ["Node.js", "Express", "MongoDB"],
-        company: "Dev Solutions",
-        logo: "https://www.svgrepo.com/show/353822/google-pay-icon.svg",
-    },
-    {
-        title: "Full Stack Developer",
-        description: "We are looking for a full stack developer to join our team.",
-        tags: ["React", "Node.js", "GraphQL"],
-        company: "Innovatech",
-        logo: "https://www.svgrepo.com/show/353822/google-pay-icon.svg",
-    },
-    {
-        title: "Data Scientist",
-        description: "We are looking for a data scientist to join our team.",
-        tags: ["Python", "Machine Learning", "Data Analysis"],
-        company: "Data Insights",
-        logo: "https://www.svgrepo.com/show/353822/google-pay-icon.svg",
-    }
-]
+import { opportunityService } from "../../services/opportunity.service";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Opportunities() {
 
-
     const [ops, setOps] = useState<Opportunity[]>([]);
+    const {user, loading} = useAuth();
 
 
     useEffect(() => {
+        if (user?.is_applicant) {
+            opportunityService.getRecommended().then(setOps).catch(console.error);
+        }
+
+        if (user?.is_institution_staff) {
+            opportunityService.getAll().then(setOps).catch(console.error);
+        }
         
-    }, [])
+    }, [loading, user]);
 
     return <div>
         <div className="tw-dashboard-grid">

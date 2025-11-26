@@ -1,20 +1,22 @@
+import { useState } from "react";
+import type { ConsentLog, Institution } from "../../types";
 import ConsentCard from "../../ui/consent-card";
-
-
-let sampleContents = [
-    {
-        title: "Consent to Share Academic Records",
-        tags: ["Academic", "Records"],
-        company: "University of Example",
-        logo: "https://www.svgrepo.com/show/353822/google-pay-icon.svg",
-        timestamp: "2024-06-01T12:00:00Z"
-    }
-];
+import React from "react";
+import { consentService } from "../../services/consent.service";
 
 export default function Consent() {
+
+    const [consents, setConsents] = useState<ConsentLog[]>([]);
+
+    React.useEffect(() => {
+        consentService.getAll().then((data) => {
+            setConsents(data);
+        });
+    }, []);
+
     return <div className="tw-dashboard-grid">
         {
-            sampleContents.map((content, index) => <ConsentCard key={index} {...content} />)
+            consents.map((content, index) => <ConsentCard key={index} title={content.id} tags={content.document_categories} company={(content.requester_institution as Institution).name} logo={(content.requester_institution as Institution).profile_image || ""} timestamp={content.created_at} />)
         }
     </div>
 }
