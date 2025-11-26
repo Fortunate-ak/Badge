@@ -5,6 +5,7 @@ import ApplicantRoutes from './pages/applicant'
 import OpportunityRoutes from './pages/opportunity'
 import AuthRoutes from './pages/auth'
 import HomePage from './pages/home'
+import InstitutionRoutes from './pages/institution'
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route element={<DashboardLayout />}>
           {ApplicantRoutes()}
           {OpportunityRoutes()}
+          {InstitutionRoutes()}
         </Route>
       {AuthRoutes()}
 
