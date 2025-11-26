@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import OpportunityService from "../../../services/opportunity.service";
-import ApplicationService from "../../../services/application.service";
+import {opportunityService} from "../../../services/opportunity.service";
+import {applicationService} from "../../../services/application.service";
 import type { Opportunity, Application } from "../../../types";
 import { useParams, Link } from "react-router";
 
@@ -11,8 +11,8 @@ export default function OpportunityDetails() {
 
     useEffect(() => {
         if (id) {
-            OpportunityService.get(id).then(setOpportunity);
-            ApplicationService.getAll(id).then(setApplications);
+            opportunityService.getById(id).then(setOpportunity);
+            applicationService.getAll(id).then(setApplications);
         }
     }, [id]);
 

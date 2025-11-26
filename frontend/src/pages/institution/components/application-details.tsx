@@ -1,29 +1,30 @@
-import { useEffect, useState } from "react";
-import ApplicationService from "../../../services/application.service";
-import ConsentService from "../../../services/consent.service";
+import { useEffect, useRef, useState } from "react";
+import { applicationService} from "../../../services/application.service";
+import { consentService } from "../../../services/consent.service";
 import type { Application } from "../../../types";
 import { useParams } from "react-router";
-import Modal from "../../../ui/layouts/modal";
+import Modal, { type ModalHandle } from "../../../ui/layouts/modal";
 import ConsentRequestModal from "./consent-request-modal";
 
 export default function ApplicationDetails() {
     const { id } = useParams<{ id: string }>();
     const [application, setApplication] = useState<Application | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const modalRef = useRef<ModalHandle | null>(null);
 
     useEffect(() => {
         if (id) {
-            ApplicationService.get(id).then(setApplication);
+            applicationService.get(id).then(setApplication);
         }
     }, [id]);
 
     const handleConsentRequest = (categoryIds: string[]) => {
         if (application) {
-            ConsentService.create({
+            consentService.create({
                 applicant: application.applicant.id,
                 document_categories: categoryIds,
             }).then(() => {
-                setIsModalOpen(false);
+                modalRef.current?.close();
             });
         }
     };
@@ -48,15 +49,15 @@ export default function ApplicationDetails() {
                 </div>
                 <button
                     className="tw-button mt-4"
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => modalRef.current?.open()}
                 >
                     Request Consent
                 </button>
             </div>
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <Modal ref={modalRef}>
                 <ConsentRequestModal
                     onSubmit={handleConsentRequest}
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={() => modalRef.current?.close()}
                 />
             </Modal>
         </div>

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ApplicationService from "../../../services/application.service";
-import type { Application } from "../../../types";
+import { Link } from "react-router";
+import {applicationService} from "../../services/application.service";
+import type { Application } from "../../types";
 
 export default function Applicants() {
     const [applications, setApplications] = useState<Application[]>([]);
 
     useEffect(() => {
-        ApplicationService.getAll().then(setApplications);
+        applicationService.getAll().then(setApplications);
     }, []);
 
     return (

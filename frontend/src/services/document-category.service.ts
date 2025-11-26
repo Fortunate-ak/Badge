@@ -1,4 +1,4 @@
-import customFetch from "../utils";
+import {customFetch} from "../utils";
 import type { DocumentCategory } from "../types";
 
 const DocumentCategoryService = {

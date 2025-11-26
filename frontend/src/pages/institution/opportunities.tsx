@@ -1,43 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import OpportunityService from "../../../services/opportunity.service";
-import type { Opportunity } from "../../../types";
-import Modal from "../../../ui/layouts/modal";
+import {opportunityService} from "../../services/opportunity.service";
+import type { Opportunity } from "../../types";
+import Modal, { type ModalHandle } from "../../ui/layouts/modal";
 import OpportunityForm from "./components/opportunity-form";
 
 export default function Opportunities() {
     const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
     const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | undefined>();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const modalRef = useRef<ModalHandle | null>(null);
 
     useEffect(() => {
-        OpportunityService.getAll().then(setOpportunities);
+        opportunityService.getAll().then(setOpportunities);
     }, []);
 
     const handleCreate = (opportunity: Partial<Opportunity>) => {
-        OpportunityService.create(opportunity).then((newOpportunity) => {
+        opportunityService.create(opportunity).then((newOpportunity) => {
             setOpportunities([...opportunities, newOpportunity]);
-            setIsModalOpen(false);
+            modalRef.current?.close();
         });
     };
 
     const handleUpdate = (opportunity: Partial<Opportunity>) => {
         if (selectedOpportunity) {
-            OpportunityService.update(selectedOpportunity.id, opportunity).then(
+            opportunityService.update(selectedOpportunity.id, opportunity).then(
                 (updatedOpportunity) => {
                     setOpportunities(
                         opportunities.map((o) =>
                             o.id === updatedOpportunity.id ? updatedOpportunity : o
                         )
                     );
-                    setIsModalOpen(false);
+                    modalRef.current?.close();
                 }
             );
         }
     };
 
     const handleDelete = (id: string) => {
-        OpportunityService.delete(id).then(() => {
+        opportunityService.delete(id).then(() => {
             setOpportunities(opportunities.filter((o) => o.id !== id));
         });
     };
@@ -50,7 +50,7 @@ export default function Opportunities() {
                     className="tw-button"
                     onClick={() => {
                         setSelectedOpportunity(undefined);
-                        setIsModalOpen(true);
+                        modalRef.current?.open();
                     }}
                 >
                     Create Opportunity
@@ -75,7 +75,7 @@ export default function Opportunities() {
                                 className="tw-button-ghost text-xs"
                                 onClick={() => {
                                     setSelectedOpportunity(opportunity);
-                                    setIsModalOpen(true);
+                                    modalRef.current?.open();
                                 }}
                                 disabled={(opportunity.applicant_count || 0) > 0}
                             >
@@ -91,7 +91,7 @@ export default function Opportunities() {
                     </div>
                 ))}
             </div>
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <Modal ref={modalRef}>
                 <OpportunityForm
                     opportunity={selectedOpportunity}
                     onSubmit={selectedOpportunity ? handleUpdate : handleCreate}

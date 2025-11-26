@@ -5,7 +5,6 @@ import type { User } from '../../types';
 
 export default function Dashboard({ title = "Search Here", className = "" }: { title?: string, className?: string }) {
     const navigate = useNavigate()
-    const { user } = useAuth()
 
 
     return <AuthProvider><div className='dashboard-container flex flex-row w-full h-screen p-0 *:p-2'>
@@ -15,7 +14,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
                 <div className='flex flex-row justify-center items-center mb-2 size-10 rounded-full bg-primary place-self-center'>
                     <h1 className='font-semibold text-xl line-clamp-1 mso filled text-white'>verified</h1>
                 </div>
-                <Navigations user={user} />
+                <Navigations />
             </div>
 
             <ProfileButton />
@@ -25,7 +24,7 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
 
         <nav className='flex items-center justify-center z-10 md:hidden fixed bottom-4 w-full'>
             <div className='bg-primary *:text-white rounded-r-full rounded-l-full flex flex-row items-center justify-around gap-4 p-3 shadow-lg w-3/4'>
-                <Navigations user={user} />
+                <Navigations />
             </div>
         </nav>
 
@@ -51,7 +50,9 @@ export default function Dashboard({ title = "Search Here", className = "" }: { t
 }
 
 
-function Navigations({ user }: { user: User | null }) {
+function Navigations() {
+
+    const { user } = useAuth()
     // applicant
     if (user && !user.is_institution_staff) return <>
         <NavItem title="Home (Documents)" icon="home" path="/applicant" />

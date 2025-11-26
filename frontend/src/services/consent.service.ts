@@ -1,10 +1,10 @@
-import customFetch from "../utils";
+import {customFetch} from "../utils";
 import type { ConsentLog } from "../types";
 import { unwrapList } from "./common";
 
 const API_URL = "/api";
 
-const ConsentService = {
+export const consentService = {
     getAll: async (): Promise<ConsentLog[]> => {
         const response = await customFetch(`${API_URL}/consents/`, {
             method: "GET",
@@ -35,4 +35,3 @@ const ConsentService = {
     },
 };
 
-export default ConsentService;
