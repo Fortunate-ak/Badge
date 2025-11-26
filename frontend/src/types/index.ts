@@ -45,6 +45,7 @@ export interface Institution {
   admins: InstitutionStaff[];
   created_at: string;
   updated_at: string;
+  verified: boolean;
 }
 
 /**

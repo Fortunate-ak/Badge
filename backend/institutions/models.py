@@ -22,6 +22,7 @@ class Institution(models.Model):
     profile_image = models.ImageField(upload_to='institution_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    verified = models.BooleanField(default=False)
     admins = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through='InstitutionStaff',
