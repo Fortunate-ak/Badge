@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {opportunityService} from "../../services/opportunity.service";
 import type { Opportunity } from "../../types";
 import Modal, { type ModalHandle } from "../../ui/layouts/modal";
@@ -9,6 +9,7 @@ export default function Opportunities() {
     const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
     const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | undefined>();
     const modalRef = useRef<ModalHandle | null>(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
         opportunityService.getAll().then(setOpportunities);
@@ -45,12 +46,11 @@ export default function Opportunities() {
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Opportunities</h1>
+                <h1 className="tw-h1">Opportunities</h1>
                 <button
                     className="tw-button"
                     onClick={() => {
-                        setSelectedOpportunity(undefined);
-                        modalRef.current?.open();
+                        navigate("/institution/opportunity/create")
                     }}
                 >
                     Create Opportunity

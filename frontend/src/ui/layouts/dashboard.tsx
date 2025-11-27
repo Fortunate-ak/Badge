@@ -3,7 +3,7 @@ import { Outlet, useLocation, Link, useNavigate } from "react-router";
 import { AuthProvider, useAuth } from '../../context/AuthContext';
 import type { User } from '../../types';
 
-export default function Dashboard({ title = "Search Here", className = "" }: { title?: string, className?: string }) {
+export default function Dashboard({ title = "Badge", className = "" }: { title?: string, className?: string }) {
     const navigate = useNavigate()
 
 

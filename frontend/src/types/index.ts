@@ -17,6 +17,7 @@ export interface User {
   dob?: string;
   is_applicant: boolean;
   is_institution_staff: boolean;
+  institution_details?: Institution[]; // Nested institution details (read-only) of which they are admin
   interests?: string[]; // List of user interests
 }
 
@@ -45,7 +46,7 @@ export interface Institution {
   admins: InstitutionStaff[];
   created_at: string;
   updated_at: string;
-  verified: boolean;
+  verified?: boolean;
 }
 
 /**

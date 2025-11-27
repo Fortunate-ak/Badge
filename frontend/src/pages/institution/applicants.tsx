@@ -12,7 +12,7 @@ export default function Applicants() {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-4">Applicants</h1>
+            <h1 className="tw-h1">Applicants</h1>
             <div className="flex flex-col gap-4">
                 {applications.map((application) => (
                     <div

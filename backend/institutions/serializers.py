@@ -29,3 +29,17 @@ class InstitutionSerializer(serializers.ModelSerializer):
             'profile_image', 'created_at', 'updated_at', 'admins', 'verified'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'admins']
+
+
+class SimpleInstitutionSerializer(serializers.ModelSerializer):
+    """
+    Simpler Serializer for the Institution model.
+    """
+
+    class Meta:
+        model = Institution
+        fields = [
+            'id', 'name', 'category', 'website', 'address',
+            'profile_image', 'created_at', 'updated_at', 'verified'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at', 'verified']

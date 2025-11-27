@@ -18,7 +18,7 @@ class OpportunitySerializer(serializers.ModelSerializer):
             'positive_tags', 'negative_tags', 'start_date', 'expiry_date',
             'created_at', 'updated_at', 'match_score'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'posted_by_institution', 'institution_details', 'match_score']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'institution_details', 'match_score']
 
 class ApplicationSerializer(serializers.ModelSerializer):
     """

@@ -259,6 +259,10 @@ table *.tw-button, table *.tw-button-secondary {
   color: var(--color-foreground);
 }
 
+@utility tw-container{
+  @apply lg:px-32 md:px-24;
+}
+
 /* NAV PILL (left vertical nav in screenshots) */
 @utility tw-nav-pill {
   @apply flex flex-col items-center gap-6 p-3 rounded-full shadow-sm;
@@ -269,6 +273,10 @@ table *.tw-button, table *.tw-button-secondary {
   box-shadow: 0 12px 30px rgba(var(--shadow-primary-rgba), 0.12);
 }
 
+@utility tw-h1{
+  @apply text-2xl font-bold;
+  color: var(--color-foreground);
+}
 /* small utilities */
 @utility mso {
   font-family: 'Material Symbols Rounded';/* Use rounded for this project */
@@ -330,4 +338,21 @@ hr {
 .ghost-plate {
   background: linear-gradient(180deg, color-mix(in srgb, var(--color-secondary) 88%, transparent), transparent);
   border-radius: 16px;
+}
+
+
+input[type="date"]::before {
+	color: #999999;
+	content: attr(placeholder);
+}
+input[type="date"] {
+	color: var(--color-foreground);
+}
+input[type="date"]:focus,
+input[type="date"]:valid {
+	color: #666666;
+}
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
+	content: "" !important;
 }

@@ -9,17 +9,33 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the User model.
     Used for retrieving and updating user profile information.
+    Includes nested institution details and staff records.
     """
+    institution_details = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             'id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active',
             'date_joined', 'bio', 'profile_image', 'social_links', 'dob',
-            'is_applicant', 'is_institution_staff', 'interests'
+            'is_applicant', 'is_institution_staff', 'interests',
+            'institution_details'
         ]
-        read_only_fields = ['id', 'email', 'is_staff', 'is_active', 'date_joined', 'is_applicant', 'is_institution_staff']
+        read_only_fields = [
+            'id', 'email', 'is_staff', 'is_active', 'date_joined', 'is_applicant',
+            'is_institution_staff', 'institution_details'
+        ]
         # Roles (is_applicant, is_institution_staff) should generally not be changeable via simple profile update
         # email is identity, usually handled separately or locked
+
+    def get_institution_details(self, obj):
+        """
+        Get all institutions where the user is a staff member or admin.
+        """
+        from institutions.serializers import SimpleInstitutionSerializer
+        institutions = obj.institutions.all()
+        return SimpleInstitutionSerializer(institutions, many=True).data
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     """

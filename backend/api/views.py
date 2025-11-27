@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from django.db.models import Q
+from rest_framework import serializers
 
 # Import models from all apps
 from accounts.models import User
@@ -61,6 +62,15 @@ class InstitutionViewSet(viewsets.ModelViewSet):
     queryset = Institution.objects.all()
     serializer_class = InstitutionSerializer
     permission_classes = [IsAuthenticated]
+    
+    # Change create institution view, to automatically make the current request user to be an institution admin
+    def perform_create(self, serializer):
+        institution = serializer.save()
+        print("institution created:", institution, self.request.user)
+        InstitutionStaff.objects.create(institution=institution, user=self.request.user, is_admin=True)
+        # Update the user's staff status
+        self.request.user.is_institution_staff = True
+        self.request.user.save()
 
     @action(detail=True, methods=['post'], url_path='add-staff')
     def add_staff(self, request, pk=None):
@@ -217,6 +227,7 @@ class OpportunityViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Ensure user is staff of the institution
         institution = serializer.validated_data.get('posted_by_institution')
+        print(institution, self.request.user, "--printing stuff here", serializer.validated_data)
         if not InstitutionStaff.objects.filter(institution=institution, user=self.request.user).exists():
              raise serializers.ValidationError("You are not a staff member of this institution.")
         serializer.save()
