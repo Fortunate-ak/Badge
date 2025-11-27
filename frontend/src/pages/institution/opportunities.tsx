@@ -1,47 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import {opportunityService} from "../../services/opportunity.service";
 import type { Opportunity } from "../../types";
-import Modal, { type ModalHandle } from "../../ui/layouts/modal";
-import OpportunityForm from "./components/opportunity-form";
 
 export default function Opportunities() {
     const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
-    const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | undefined>();
-    const modalRef = useRef<ModalHandle | null>(null);
     const navigate = useNavigate()
 
     useEffect(() => {
         opportunityService.getAll().then(setOpportunities);
     }, []);
-
-    const handleCreate = (opportunity: Partial<Opportunity>) => {
-        opportunityService.create(opportunity).then((newOpportunity) => {
-            setOpportunities([...opportunities, newOpportunity]);
-            modalRef.current?.close();
-        });
-    };
-
-    const handleUpdate = (opportunity: Partial<Opportunity>) => {
-        if (selectedOpportunity) {
-            opportunityService.update(selectedOpportunity.id, opportunity).then(
-                (updatedOpportunity) => {
-                    setOpportunities(
-                        opportunities.map((o) =>
-                            o.id === updatedOpportunity.id ? updatedOpportunity : o
-                        )
-                    );
-                    modalRef.current?.close();
-                }
-            );
-        }
-    };
-
-    const handleDelete = (id: string) => {
-        opportunityService.delete(id).then(() => {
-            setOpportunities(opportunities.filter((o) => o.id !== id));
-        });
-    };
 
     return (
         <div>
@@ -58,45 +26,20 @@ export default function Opportunities() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {opportunities.map((opportunity) => (
-                    <div key={opportunity.id} className="p-4 border rounded-md">
-                        <h2 className="text-lg font-bold">{opportunity.title}</h2>
+                    <Link to={`/institution/opportunity/${opportunity.id}`} key={opportunity.id} className="p-4 border border-border rounded-md bg-secondary group">
+                        <div className="flex flex-row justify-between items-center mb-2">
+                            <h2 className="text-lg font-bold">{opportunity.title}</h2>
+                            <span className="mso group-hover:opacity-100 opacity-0 transition-all -mt-3">arrow_outward</span>
+                        </div>
+                        
                         <p className="text-sm text-gray-500">
                             {opportunity.opportunity_type}
                         </p>
-                        <p>{opportunity.description}</p>
-                        <div className="flex gap-2 mt-4">
-                            <Link
-                                to={`/institution/opportunity/${opportunity.id}`}
-                                className="tw-button-ghost text-xs"
-                            >
-                                View
-                            </Link>
-                            <button
-                                className="tw-button-ghost text-xs"
-                                onClick={() => {
-                                    setSelectedOpportunity(opportunity);
-                                    modalRef.current?.open();
-                                }}
-                                disabled={(opportunity.applicant_count || 0) > 0}
-                            >
-                                Edit
-                            </button>
-                            <button
-                                className="tw-button-ghost text-xs text-red-500"
-                                onClick={() => handleDelete(opportunity.id)}
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </div>
+                        <p className="line-clamp-3">{opportunity.description}</p>
+                        
+                    </Link>
                 ))}
             </div>
-            <Modal ref={modalRef}>
-                <OpportunityForm
-                    opportunity={selectedOpportunity}
-                    onSubmit={selectedOpportunity ? handleUpdate : handleCreate}
-                />
-            </Modal>
         </div>
     );
 }
