@@ -29,7 +29,7 @@ export default function OpportunityViewPage() {
             <h2 className="text-2xl font-bold mt-2">{value?.institution_details?.name}</h2>
             <h3 className="text-sm">{value?.institution_details?.category}</h3>
             <p className="text-foreground/70 text-sm my-2">
-                {value?.institution_details?.name}
+                {value?.institution_details?.description}
             </p>
 
 
@@ -40,7 +40,7 @@ export default function OpportunityViewPage() {
                 </li>
                 <li>
                     <span className="mso text-xl text-muted">mail</span>
-                    {value?.institution_details?.admins[0].user_details?.email}
+                    {value?.institution_details?.email}
                 </li>
                 <li>
                     <span className="mso text-xl text-muted">link</span>
@@ -48,7 +48,7 @@ export default function OpportunityViewPage() {
                 </li>
                 <li>
                     <span className="mso text-xl text-muted">phone</span>
-                    +123-456-7890
+                    {value?.institution_details?.phone}
                 </li>
             </ul>
         </div>

@@ -23,6 +23,9 @@ class Institution(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     verified = models.BooleanField(default=False)
+    description = models.TextField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     admins = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through='InstitutionStaff',

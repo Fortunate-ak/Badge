@@ -47,6 +47,9 @@ export interface Institution {
   created_at: string;
   updated_at: string;
   verified?: boolean;
+  description?: string;
+  email?: string;
+  phone?: string;
 }
 
 /**
