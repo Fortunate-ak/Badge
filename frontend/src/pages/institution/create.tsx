@@ -14,6 +14,9 @@ export default function CreateInstitutionPage() {
         category : "University",
         website : "",
         address : "",
+        email : "",
+        phone : "",
+        description : ""
     });
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -36,6 +39,9 @@ export default function CreateInstitutionPage() {
     </select>
     <input className="tw-input" type="url" name="website" value={values.website} onChange={handleChange} placeholder="Website" />
     <input className="tw-input" type="text" name="address" value={values.address} onChange={handleChange} placeholder="Address" />
+    <input className="tw-input" type="email" name="email" value={values.email} onChange={handleChange} placeholder="Email" />
+    <input className="tw-input" type="tel" name="phone" value={values.phone} onChange={handleChange} placeholder="Phone" />
+    <textarea className="tw-textarea" name="description" value={values.description} onChange={handleChange} placeholder="Description" rows={4} />
     <button className="tw-button" type="submit">Create Institution</button>
   </form>;
 }

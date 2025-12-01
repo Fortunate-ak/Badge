@@ -5,6 +5,7 @@ import Consent from "./consent";
 import OpportunityDetails from "./components/opportunity-details";
 import ApplicationDetails from "./components/application-details";
 import CreateInstitutionPage from "./create";
+import UpdateInstitutionPage from "./update";
 import CreateOpportunity from "./create-opportunity";
 
 
@@ -12,6 +13,7 @@ export default function InstitutionRoutes() {
     return <Route path="institution">
         <Route index element={<Opportunities />} />
         <Route path="create" element={<CreateInstitutionPage />} />
+        <Route path=":id" element={<UpdateInstitutionPage />} />
         <Route path="applicants" element={<Applicants />} />
         <Route path="consent" element={<Consent />} />
         <Route path="opportunity/:id" element={<OpportunityDetails />} />

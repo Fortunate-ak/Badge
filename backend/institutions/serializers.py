@@ -26,7 +26,7 @@ class InstitutionSerializer(serializers.ModelSerializer):
         model = Institution
         fields = [
             'id', 'name', 'category', 'website', 'address',
-            'profile_image', 'created_at', 'updated_at', 'admins', 'verified'
+            'profile_image', 'created_at', 'updated_at', 'admins', 'verified', 'description', 'email', 'phone'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'admins']
 
@@ -40,6 +40,6 @@ class SimpleInstitutionSerializer(serializers.ModelSerializer):
         model = Institution
         fields = [
             'id', 'name', 'category', 'website', 'address',
-            'profile_image', 'created_at', 'updated_at', 'verified'
+            'profile_image', 'created_at', 'updated_at', 'verified', 'description', 'email', 'phone'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'verified']

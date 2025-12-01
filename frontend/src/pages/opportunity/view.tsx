@@ -65,7 +65,7 @@ export default function OpportunityViewPage() {
 
                 <div className="flex flex-row gap-2 mb-2">
                     {
-                        ["React", "TypeScript", "CSS"].map((tag, index) => <span key={index} className="tw-tag">{tag}</span>)
+                        value?.tags?.map((tag, index) => <span key={index} className="tw-tag">{tag}</span>)
                     }
                 </div>
             </div>
@@ -73,17 +73,9 @@ export default function OpportunityViewPage() {
 
             <article className="flex flex-col gap-2 mt-4">
                 <h1 className="text-xl font-bold">Job Description</h1>
-                <p>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloribus ut sit eius quis cupiditate nihil, amet nisi nobis corrupti non dolores dolorum rerum id ex saepe deleniti! Qui, aliquam iure?
-                </p>
-
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus, ratione dolore blanditiis doloribus quam veniam mollitia soluta aspernatur, repudiandae tenetur illum sed totam reprehenderit dolorem provident cum sunt ducimus velit.
-                </p>
-
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Est neque ducimus suscipit officia. Iste fuga quis vitae est sunt distinctio! Non debitis minima labore esse ad suscipit repudiandae doloremque reprehenderit.
-                </p>
+                {
+                    value?.content
+                }
             </article>
         </div>
     </div>
