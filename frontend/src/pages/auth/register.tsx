@@ -14,14 +14,15 @@ export default function Register() {
         bio: "",
         dob: "",
         is_institution_staff: false,
-        confirm_password: ""
+        password_confirm: ""
     });
     const [error, setError] = React.useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log(values);
         try {
-            await RegisterUser(values.email, values.password, values.first_name, values.last_name, values.bio, values.dob, values.is_institution_staff);
+            await RegisterUser(values.email, values.password, values.first_name, values.last_name, values.bio, values.dob, values.is_institution_staff, values.password_confirm);
             // Handle successful login (e.g., redirect or show a success message)
             navigate("/");
         } catch (error) {
@@ -42,7 +43,7 @@ export default function Register() {
                     <input required name="password" type="password" value={values.password} onChange={handleChange} className="tw-input w-full" placeholder="Password" />
                 </FormElement>
                 <FormElement className="w-full" title="Confirm Password">
-                    <input required name="confirm_password" type="password" value={values.confirm_password} onChange={handleChange} className="tw-input w-full" placeholder="Confirm Password" />
+                    <input required name="password_confirm" type="password" value={values.password_confirm} onChange={handleChange} className="tw-input w-full" placeholder="Confirm Password" />
                 </FormElement>
                 <FormElement className="w-full" title="Date of Birth">
                     <input required name="dob" type="date" value={values.dob} onChange={handleChange} className="tw-input w-full" placeholder="Date of Birth" />

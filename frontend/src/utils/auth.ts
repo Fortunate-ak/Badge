@@ -25,7 +25,7 @@ export async function LogoutUser() {
 }
 
 
-export async function RegisterUser(email: string, password: string, first_name: string, last_name: string, bio: string, dob: string | Date, is_institution_staff: boolean) {
+export async function RegisterUser(email: string, password: string, first_name: string, last_name: string, bio: string, dob: string | Date, is_institution_staff: boolean, password_confirm : string) {
     let response = await customFetch('/api/auth/register/', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -36,12 +36,13 @@ export async function RegisterUser(email: string, password: string, first_name: 
             last_name,
             bio,
             dob,
-            is_institution_staff
+            is_institution_staff,
+            password_confirm
         })
     });
     if (response.status == 400) {
         console.log(response);
-        throw new Error("Email already exists...")
+        throw new Error("Error occured. ")
     }
     if (!response.ok) {
         throw new Error('Error occured');
