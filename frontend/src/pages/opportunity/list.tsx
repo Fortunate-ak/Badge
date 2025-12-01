@@ -23,7 +23,7 @@ export default function Opportunities() {
 
     return <div>
         <div className="tw-dashboard-grid">
-            {ops.map((opportunity, index) => <OpportunityCard key={index} title={opportunity.title} description={opportunity.description} tags={opportunity.tags} company={opportunity.institution_details?.name || ""} logo={opportunity.institution_details?.profile_image}/>)}
+            {ops.map((opportunity, index) => <OpportunityCard id={opportunity.id} key={index} title={opportunity.title} description={opportunity.description} tags={opportunity.tags} company={opportunity.institution_details?.name || ""} logo={opportunity.institution_details?.profile_image}/>)}
         </div>
     </div>
 }

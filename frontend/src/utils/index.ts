@@ -47,6 +47,7 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
 
 
 export function timeAgo(input: Date | string | number): string {
+  console.log("timeAgo input:", input);
   const now = new Date();
   const date = new Date(input);
 

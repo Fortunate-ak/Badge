@@ -1,39 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Opportunity } from "../../types";
 import { timeAgo } from "../../utils";
+import { useParams } from "react-router";
+import { opportunityService } from "../../services/opportunity.service";
 
 
 
 export default function OpportunityViewPage() {
 
-    const [value, setValue] = useState<Opportunity|any>({
-        id: "",
-        company: "Tech Corp",
-        title: "Senior Frontend Developer",
-        description: "We are looking for a senior frontend developer to join our team. The ideal candidate will have experience with React, TypeScript, and CSS. You will be responsible for building and maintaining our web applications.",
-        updated_at: "2024-06-01",
-    });
+    const [value, setValue] = useState<Opportunity|null>(null);
+
+    let params = useParams();
+    const { id } = params;
+
+    useEffect(() => {
+        // Fetch opportunity by ID here and setValue
+        opportunityService.getById(id || "").then((data) => {
+            setValue(data);
+            console.log("Fetched opportunity data:", data);
+        }).catch(console.error);
+    }, [id]);
+
+    
     
     return <div className="grid grid-cols-[1fr_3fr] gap-4 items-start">
         <div className="flex flex-col p-4 pt-0">
             <img src="https://www.svgrepo.com/show/353822/google-pay-icon.svg" alt="company logo" className="w-full p-2 border border-border rounded-full" />
-            <h2 className="text-2xl font-bold mt-2">{value.company}</h2>
-            <h3 className="text-sm">Education</h3>
-            <p className="text-foreground/70 text-sm my-2">Tech Corp is a leading technology company specializing in innovative solutions for businesses worldwide. We are committed to excellence and fostering a collaborative work environment.</p>
+            <h2 className="text-2xl font-bold mt-2">{value?.institution_details?.name}</h2>
+            <h3 className="text-sm">{value?.institution_details?.category}</h3>
+            <p className="text-foreground/70 text-sm my-2">
+                {value?.institution_details?.name}
+            </p>
 
 
             <ul className="flex flex-col gap-1 *:flex *:flex-row *:gap-1 *:items-center *:text-sm">
                 <li>
                     <span className="mso text-xl text-muted">location_on</span>
-                    Harare / Zimbabwe
+                    {value?.institution_details?.address}
                 </li>
                 <li>
                     <span className="mso text-xl text-muted">mail</span>
-                    info@techcorp.com
+                    {value?.institution_details?.admins[0].user_details?.email}
                 </li>
                 <li>
                     <span className="mso text-xl text-muted">link</span>
-                    techcorp.com
+                    {value?.institution_details?.website}
                 </li>
                 <li>
                     <span className="mso text-xl text-muted">phone</span>
@@ -44,13 +55,13 @@ export default function OpportunityViewPage() {
 
         <div className="rounded-xl border border-border p-4 flex flex-col">
             <div className="flex flex-row justify-between items-center mb-1">
-                <span className="text-sm text-foreground/50">Posted {timeAgo(value.updated_at)}</span>
+                <span className="text-sm text-foreground/50">Posted {timeAgo(value?.updated_at || "12-12-12")}</span>
                 <ActionButton />
                 
             </div>
             <div className="mb-2">
-                <h1 className="text-3xl font-bold mb-2">{value.title}</h1>
-                <p className="mb-2">{value.description}</p>
+                <h1 className="text-3xl font-bold mb-2">{value?.title}</h1>
+                <p className="mb-2">{value?.description}</p>
 
                 <div className="flex flex-row gap-2 mb-2">
                     {
