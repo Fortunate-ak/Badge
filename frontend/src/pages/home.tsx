@@ -15,7 +15,10 @@ export default function HomePage() {
       <h1 className="text-3xl">Welcome to the Home Page {currentUser?.first_name} {currentUser?.last_name}</h1>
         <p>This is the main landing page of the application.</p>
         {
-            currentUser ? <span></span> : <span className="mt-4">
+            currentUser ? <span>
+              <Link className="tw-button" to="/applicant">Applicant</Link>
+              <Link className="tw-button ml-4" to="/institution">Institution</Link>
+            </span> : <span className="mt-4">
                 <Link to="/auth" className="tw-button"> Login</Link> or <Link className="tw-button" to="/auth/register"> Register</Link>
             </span>
         }

@@ -23,7 +23,7 @@ export default function OpportunityViewPage() {
 
     
     
-    return <div className="grid grid-cols-[1fr_3fr] gap-4 items-start">
+    return <div className="md:grid grid-cols-[1fr_3fr] flex flex-col-reverse gap-4 items-start">
         <div className="flex flex-col p-4 pt-0">
             <img src="https://www.svgrepo.com/show/353822/google-pay-icon.svg" alt="company logo" className="w-full p-2 border border-border rounded-full" />
             <h2 className="text-2xl font-bold mt-2">{value?.institution_details?.name}</h2>
@@ -53,7 +53,7 @@ export default function OpportunityViewPage() {
             </ul>
         </div>
 
-        <div className="rounded-xl border border-border p-4 flex flex-col">
+        <div className="rounded-xl border border-border p-4 flex flex-col w-full">
             <div className="flex flex-row justify-between items-center mb-1">
                 <span className="text-sm text-foreground/50">Posted {timeAgo(value?.updated_at || "12-12-12")}</span>
                 <ActionButton />
@@ -90,7 +90,8 @@ export default function OpportunityViewPage() {
 function ActionButton() {
 
     if (true) {
-        return <button className="tw-button">Apply Now</button>
+        
+        return <button className="tw-button cursor-pointer">Apply Now</button>
     }
     return <span className="mso">edit</span>
 }
