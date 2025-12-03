@@ -89,7 +89,7 @@ function NavItem({ title, icon, path = "" }: { title: string, icon: string, path
 function ProfileButton() {
     const { user } = useAuth()
     return <div title={user?.first_name + " " + user?.last_name} className='overflow-x-clip w-full flex items-center justify-center'>
-            <div className='rounded-full size-8 text-sm flex items-center justify-center p-2 bg-secondary text-foreground border border-border'>
+            <div className={'rounded-full size-8 text-sm flex items-center justify-center p-2 bg-secondary text-foreground border border-border ' + (user?.is_institution_staff ? "bg-primary! text-white" : "")}>
                 {user?.first_name[0]}
             </div>
     </div>
