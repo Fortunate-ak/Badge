@@ -1,6 +1,6 @@
 import { customFetch } from '../utils';
 import { unwrapList } from './common';
-import type { Opportunity } from '../types';
+import type { Opportunity, Application } from '../types';
 
 const API_URL = '/api';
 
@@ -79,5 +79,29 @@ export const opportunityService = {
     if (!response.ok) throw await response.json();
     const data = await response.json();
     return unwrapList<Opportunity>(data);
+  },
+
+  /**
+   * Check if the current user has applied to a specific opportunity.
+   */
+  async hasApplied(opportunityId: string): Promise<{ has_applied: boolean; application_id: string | null }> {
+    const response = await customFetch(`${API_URL}/opportunities/${opportunityId}/has-applied/`, {
+      method: 'GET',
+    });
+    if (!response.ok) throw await response.json();
+    return response.json();
+  },
+
+  /**
+   * Get all applications for a specific opportunity.
+   * (For institution staff)
+   */
+  async getApplications(opportunityId: string): Promise<Application[]> {
+    const response = await customFetch(`${API_URL}/opportunities/${opportunityId}/applications/`, {
+      method: 'GET',
+    });
+    if (!response.ok) throw await response.json();
+    const data = await response.json();
+    return unwrapList<Application>(data);
   }
 };

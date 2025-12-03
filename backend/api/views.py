@@ -19,7 +19,10 @@ from opportunities.recommendation import RecommendationEngine
 from accounts.serializers import UserSerializer, ChangePasswordSerializer, RegisterSerializer
 from institutions.serializers import InstitutionSerializer, InstitutionStaffSerializer
 from documents.serializers import DocumentCategorySerializer, DocumentSerializer, VerificationSerializer, ConsentLogSerializer
-from opportunities.serializers import OpportunitySerializer, ApplicationSerializer, MatchRecordSerializer, ApplicationStatusUpdateSerializer
+from opportunities.serializers import (
+    OpportunitySerializer, ApplicationSerializer, MatchRecordSerializer,
+    ApplicationStatusUpdateSerializer, ApplicationDetailSerializer, ApplicationCreateSerializer
+)
 
 # Define ViewSets for each model
 
@@ -63,12 +66,9 @@ class InstitutionViewSet(viewsets.ModelViewSet):
     serializer_class = InstitutionSerializer
     permission_classes = [IsAuthenticated]
     
-    # Change create institution view, to automatically make the current request user to be an institution admin
     def perform_create(self, serializer):
         institution = serializer.save()
-        print("institution created:", institution, self.request.user)
         InstitutionStaff.objects.create(institution=institution, user=self.request.user, is_admin=True)
-        # Update the user's staff status
         self.request.user.is_institution_staff = True
         self.request.user.save()
 
@@ -76,11 +76,8 @@ class InstitutionViewSet(viewsets.ModelViewSet):
     def add_staff(self, request, pk=None):
         """
         Add a staff member to the institution.
-        Requires the requester to be an admin of the institution.
         """
         institution = self.get_object()
-
-        # Check if requester is admin of this institution
         if not InstitutionStaff.objects.filter(institution=institution, user=request.user, is_admin=True).exists() and not request.user.is_staff:
             return Response({'error': 'You do not have permission to add staff.'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -110,18 +107,15 @@ class InstitutionStaffViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Users should only see staff of institutions they belong to, or if they are superadmin
         user = self.request.user
         if user.is_staff:
             return InstitutionStaff.objects.all()
-
-        # Get institutions where user is staff
         my_institutions = InstitutionStaff.objects.filter(user=user).values_list('institution', flat=True)
         return InstitutionStaff.objects.filter(institution__in=my_institutions)
 
 class DocumentCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint for document categories. Read-only for standard users.
+    API endpoint for document categories.
     """
     queryset = DocumentCategory.objects.all()
     serializer_class = DocumentCategorySerializer
@@ -136,21 +130,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        # Users see their own documents
-        # Institution staff see documents they have consent for
-
-        # Basic: return own documents
-        return Document.objects.filter(applicant=user)
-
-        # TODO: Expand to include documents accessible via consent if user is institution staff
-        # This logic can get complex, for now we prioritize basic flow.
+        return Document.objects.filter(applicant=self.request.user)
 
     def perform_create(self, serializer):
-        # Auto assign uploader
-        # Check if uploading for self or on behalf (if allowed)
-        # For now assume uploading for self or need to specify applicant if staff
-
         applicant = serializer.validated_data.get('applicant')
         if not applicant:
             serializer.save(applicant=self.request.user, uploaded_by=self.request.user)
@@ -159,9 +141,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='verify')
     def verify(self, request, pk=None):
-        """
-        Verify a document.
-        """
         document = self.get_object()
         institution_id = request.data.get('institution_id')
         is_verified = request.data.get('is_verified', True)
@@ -169,34 +148,22 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         if not institution_id:
              return Response({'error': 'Institution ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Check if user is staff of institution
         if not InstitutionStaff.objects.filter(institution_id=institution_id, user=request.user).exists():
              return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
 
         verification, created = Verification.objects.update_or_create(
             document=document,
             institution_id=institution_id,
-            defaults={
-                'is_verified': is_verified,
-                'rejection_reason': rejection_reason,
-                'verified_by': request.user
-            }
+            defaults={'is_verified': is_verified, 'rejection_reason': rejection_reason, 'verified_by': request.user}
         )
         return Response(VerificationSerializer(verification).data)
 
 class VerificationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for document verifications.
-    """
     queryset = Verification.objects.all()
     serializer_class = VerificationSerializer
     permission_classes = [IsAuthenticated]
 
 class ConsentLogViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for consent logs.
-    """
     queryset = ConsentLog.objects.all()
     serializer_class = ConsentLogSerializer
     permission_classes = [IsAuthenticated]
@@ -210,7 +177,6 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
         consent = self.get_object()
         if consent.applicant != request.user:
              return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
-
         from django.utils import timezone
         consent.revoked_at = timezone.now()
         consent.save()
@@ -224,32 +190,50 @@ class OpportunityViewSet(viewsets.ModelViewSet):
     serializer_class = OpportunitySerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
     def perform_create(self, serializer):
-        # Ensure user is staff of the institution
         institution = serializer.validated_data.get('posted_by_institution')
-        print(institution, self.request.user, "--printing stuff here", serializer.validated_data)
         if not InstitutionStaff.objects.filter(institution=institution, user=self.request.user).exists():
              raise serializers.ValidationError("You are not a staff member of this institution.")
         serializer.save()
 
+    @action(detail=True, methods=['get'], url_path='has-applied')
+    def has_applied(self, request, pk=None):
+        """
+        Check if the current user has applied to this opportunity.
+        """
+        opportunity = self.get_object()
+        has_applied = Application.objects.filter(opportunity=opportunity, applicant=request.user).exists()
+        application_id = None
+        if has_applied:
+            application_id = Application.objects.get(opportunity=opportunity, applicant=request.user).id
+        return Response({'has_applied': has_applied, 'application_id': application_id})
+
+    @action(detail=True, methods=['get'], url_path='applications')
+    def applications(self, request, pk=None):
+        """
+        Get all applications for a specific opportunity.
+        (Restricted to institution staff)
+        """
+        opportunity = self.get_object()
+        if not InstitutionStaff.objects.filter(institution=opportunity.posted_by_institution, user=request.user).exists():
+            return Response({'error': 'You do not have permission to view applications for this opportunity.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        applications = Application.objects.filter(opportunity=opportunity)
+        serializer = ApplicationSerializer(applications, many=True)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['get'], url_path='recommended')
     def recommended(self, request):
-        """
-        Returns opportunities recommended for the current user.
-        Sorted by match score (highest first) and expiry date (non-expired first).
-        """
         user = request.user
         if not user.is_applicant:
              return Response({'error': 'Recommendations are only for applicants.'}, status=status.HTTP_400_BAD_REQUEST)
 
         queryset = self.filter_queryset(self.get_queryset())
-
         engine = RecommendationEngine()
         sorted_opportunities = engine.sort_opportunities(user, queryset)
-
-        # We need to paginate the result since we are returning a list,
-        # but viewset pagination works on querysets usually.
-        # However, we have a list of objects now.
 
         page = self.paginate_queryset(sorted_opportunities)
         if page is not None:
@@ -264,29 +248,33 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     API endpoint for applications.
     """
     queryset = Application.objects.all()
-    serializer_class = ApplicationSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ApplicationCreateSerializer
+        if self.action in ['retrieve', 'list']:
+            return ApplicationDetailSerializer
+        return ApplicationSerializer
 
     def get_queryset(self):
         user = self.request.user
-        # Applicants see their own applications
         if user.is_applicant:
             return Application.objects.filter(applicant=user)
-
-        # Institution staff see applications to their opportunities
         if user.is_institution_staff:
-             return Application.objects.filter(opportunity__posted_by_institution__admins__user=user).distinct()
-
+             my_institutions = InstitutionStaff.objects.filter(user=user).values_list('institution', flat=True)
+             return Application.objects.filter(opportunity__posted_by_institution__in=my_institutions).distinct()
         return Application.objects.none()
 
     def perform_create(self, serializer):
+        opportunity = serializer.validated_data.get('opportunity')
+        if Application.objects.filter(opportunity=opportunity, applicant=self.request.user).exists():
+            raise serializers.ValidationError("You have already applied to this opportunity.")
         serializer.save(applicant=self.request.user, status='Submitted')
 
     @action(detail=True, methods=['patch'], url_path='update-status')
     def update_status(self, request, pk=None):
         application = self.get_object()
-
-        # Check permission
         institution = application.opportunity.posted_by_institution
         if not InstitutionStaff.objects.filter(institution=institution, user=request.user).exists():
              return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)

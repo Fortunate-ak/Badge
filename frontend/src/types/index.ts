@@ -126,6 +126,24 @@ export interface Opportunity {
   created_at: string;
   updated_at: string;
   applicant_count?: number;
+  has_applied?: boolean;
+}
+
+export interface Applicant {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  profile_image:string;
+  social_links:string;
+  dob:string;
+  interests:string;
+}
+
+export interface OpportunityForApplication {
+  id: string;
+  title: string;
+  opportunity_type: string;
 }
 
 /**
@@ -133,12 +151,17 @@ export interface Opportunity {
  */
 export interface Application {
   id: string;
-  applicant: User; // User ID
-  opportunity: Opportunity; // Opportunity ID
+  applicant: Applicant;
+  opportunity: OpportunityForApplication;
   status: string;
   created_at: string;
   updated_at: string;
 }
+
+export interface ApplicationDetail extends Application {
+  opportunity: Opportunity;
+}
+
 
 /**
  * Represents the AI-generated match record.

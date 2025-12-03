@@ -3,12 +3,15 @@ import type { Opportunity } from "../../types";
 import { timeAgo } from "../../utils";
 import { useParams } from "react-router";
 import { opportunityService } from "../../services/opportunity.service";
+import React from "react";
+import { useAuth } from "../../context/AuthContext";
+import { applicationService } from "../../services/application.service";
 
 
 
 export default function OpportunityViewPage() {
 
-    const [value, setValue] = useState<Opportunity|null>(null);
+    const [value, setValue] = useState<Opportunity | null>(null);
 
     let params = useParams();
     const { id } = params;
@@ -21,8 +24,8 @@ export default function OpportunityViewPage() {
         }).catch(console.error);
     }, [id]);
 
-    
-    
+
+
     return <div className="md:grid grid-cols-[1fr_3fr] flex flex-col-reverse gap-4 items-start">
         <div className="flex flex-col p-4 pt-0">
             <img src="https://www.svgrepo.com/show/353822/google-pay-icon.svg" alt="company logo" className="w-full p-2 border border-border rounded-full" />
@@ -56,8 +59,11 @@ export default function OpportunityViewPage() {
         <div className="rounded-xl border border-border p-4 flex flex-col w-full">
             <div className="flex flex-row justify-between items-center mb-1">
                 <span className="text-sm text-foreground/50">Posted {timeAgo(value?.updated_at || "12-12-12")}</span>
-                <ActionButton />
-                
+                {
+                    id ? <ActionButton opportunityId={id} /> : null
+                }
+
+
             </div>
             <div className="mb-2">
                 <h1 className="text-3xl font-bold mb-2">{value?.title}</h1>
@@ -87,11 +93,30 @@ export default function OpportunityViewPage() {
  * If the user has editing rights, it returns an "edit" span.
  * @returns the correct action button
  */
-function ActionButton() {
+function ActionButton({ opportunityId }: { opportunityId: string }) {
+    const [hasApplied, setHasApplied] = React.useState<boolean | null>(null);
+    const { user } = useAuth();
 
-    if (true) {
-        
-        return <button className="tw-button cursor-pointer">Apply Now</button>
+    React.useEffect(() => {
+            opportunityService.hasApplied(opportunityId || "").then((hasAppliedValue) => {
+                setHasApplied(hasAppliedValue.has_applied);
+            }).catch(console.error);
+    }, [opportunityId]);
+
+
+    const applyNow = () => {
+        applicationService.apply(opportunityId || "").then(() => {
+            setHasApplied(true);
+        }).catch(console.error);
     }
-    return <span className="mso">edit</span>
+    
+    if (hasApplied === null) {
+        return <span>Loading...</span>;
+    }
+
+    if (!hasApplied) {
+        return <button onClick={() => applyNow()} className="tw-button cursor-pointer">Apply Now</button>
+    }else{
+        return <button className="tw-button cursor-pointer">See Application Status</button>
+    }
 }
