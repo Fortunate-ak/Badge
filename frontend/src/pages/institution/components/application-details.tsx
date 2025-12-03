@@ -14,7 +14,7 @@ export default function ApplicationDetails() {
 
     useEffect(() => {
         if (id) {
-            applicationService.get(id).then(setApplication);
+            applicationService.getById(id).then(setApplication);
         }
     }, [id]);
 

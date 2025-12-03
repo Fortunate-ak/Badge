@@ -12,7 +12,7 @@ export default function OpportunityDetails() {
     useEffect(() => {
         if (id) {
             opportunityService.getById(id).then(setOpportunity);
-            applicationService.getAll().then(setApplications);
+            opportunityService.getApplications(id).then(setApplications);
         }
     }, [id]);
 
