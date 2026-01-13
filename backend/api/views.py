@@ -272,6 +272,14 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError("You have already applied to this opportunity.")
         serializer.save(applicant=self.request.user, status='Submitted')
 
+        # Trigger "SLM" Match Record Generation
+        try:
+            engine = RecommendationEngine()
+            engine.generate_match_record(self.request.user, opportunity)
+        except Exception as e:
+            # Log error but don't fail the application creation
+            print(f"Error generating match record: {e}")
+
     @action(detail=True, methods=['patch'], url_path='update-status')
     def update_status(self, request, pk=None):
         application = self.get_object()

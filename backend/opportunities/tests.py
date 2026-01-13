@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
-from .models import Opportunity
+from .models import Opportunity, MatchRecord
 from accounts.models import User
 from .recommendation import RecommendationEngine
 import datetime
@@ -84,3 +84,25 @@ class RecommendationEngineTestCase(TestCase):
 
         # Verify scores attached
         self.assertAlmostEqual(sorted_opps[0].match_score, 2/3)
+
+    def test_generate_match_record(self):
+        engine = RecommendationEngine()
+        match_record = engine.generate_match_record(self.user_python, self.opp_python)
+
+        self.assertIsInstance(match_record, MatchRecord)
+        self.assertEqual(match_record.applicant, self.user_python)
+        self.assertEqual(match_record.opportunity, self.opp_python)
+
+        # Verify arguments
+        self.assertIn("Python", match_record.winning_argument)
+        self.assertIn("Django", match_record.winning_argument)
+        self.assertIn("Rest Framework", match_record.losing_argument.title()) # It's case sensitive in text usually, but my implementation lowercases for logic. The text output keeps user/opp case?
+        # Actually my implementation lowercases everything in comparison.
+        # The stored tags in models.py are case sensitive lists?
+        # My implementation `generate_match_record` converts to lower for matching.
+        # And creates strings using the lowercase versions if I use `matched_tags`.
+        # Let's check logic: `matched_tags = list(user_interests.intersection(opp_tags))` -> these are lowercase.
+        # So the text will contain lowercase tags.
+        self.assertIn("rest framework", match_record.losing_argument)
+
+        self.assertAlmostEqual(float(match_record.match_percentage), 66.67, places=1)

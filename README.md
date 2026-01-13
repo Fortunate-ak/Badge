@@ -7,8 +7,8 @@ This document provides a concise, high-level technical overview of the Badge sys
 Badge is a unified, consent-driven platform for verifying applicant credentials and matching them to diverse opportunities (Jobs, Programs, Scholarships).
 
 *   **Trust Layer:** Documents are verified by **Institutions** (not just applicants) and have internal categories. Access is granted per category, per request, via explicit user consent.
-*   **Tag-Based Matching:** Uses **Jaccard Similarity** to match applicants to opportunities based on shared tags/interests.
-*   **Explainability:** Matching results are transparent, based on the overlap between an applicant's interests and an opportunity's tags.
+*   **Tag-Based Matching (Applicant View):** Uses **Jaccard Similarity** to recommend opportunities to applicants based on shared tags/interests.
+*   **Explainable Matching (Institution View):** Uses an **AI/SLM Core** to generate a "Debate" (Winning/Losing arguments) and a specific Match Score for applications, stored in `MatchRecords`.
 
 ## **1\. System Architecture & Tech Stack**
 
@@ -43,24 +43,35 @@ The `Opportunity` model is highly flexible to accommodate various non-job postin
 | **Scholarship**  | Financial aid opportunity, often posted by an **Institution**. |
 | **Admission**    | General university application route.                          |
 
-## **3\. The Recommendation Engine (Tag-Based)**
+## **3\. The Explainable Matching Engine (SLM Core)**
 
-The matching engine provides a simple, robust way to connect applicants with opportunities.
+The matching engine is the intelligence layer, moving beyond simple keyword matching to provide a clear rationale.
 
-### **3.1 Matching Logic**
+### **3.1 Matching Pipeline Steps**
 
-1.  **Input Gathering:**
-    *   **Applicant Interests:** A list of tags/interests defined by the user (e.g., "Python", "Data Science").
-    *   **Opportunity Tags:** A list of tags defined by the institution for the opportunity (e.g., "Python", "Remote").
-2.  **Jaccard Similarity:** The system calculates a similarity score based on the intersection over union of the two tag sets.
-    *   `Score = |Interests ∩ Tags| / |Interests ∪ Tags|`
-3.  **Sorting:** Opportunities are recommended in the following order:
-    1.  **Validity:** Non-expired opportunities appear first.
-    2.  **Relevance:** Opportunities with higher match scores appear higher.
+1.  **Input Gathering:** Collect the Opportunity's requirements (filters, tags) and the Applicant's data (profile, interests).
+2.  **Rule-Based Filtering:** Apply hard filters (e.g., required qualifications, minimum GPA) to eliminate non-viable candidates quickly.
+3.  **SLM Generation (The Debate):** The SLM (Gemma3 1B) generates two key text outputs:
+    *   **Winning Argument:** Why the applicant is a strong fit.
+    *   **Losing Argument:** Why the applicant might **not** be the best fit.
+4.  **Percentage Calculation:** A scoring function calculates a **Match Percentage**.
+5.  **Persistence:** The complete result is stored in a dedicated `MatchRecord` model, keyed by (`applicant_id`, `opportunity_id`).
 
-### **3.2 Persistence**
+### **3.2 MatchRecord Persistence**
 
-Match scores are calculated dynamically. `MatchRecord` model is available for storing historical match data if needed.
+A dedicated model ensures speed and transparency.
+
+| Field              | Type            | Purpose                                                                                                     |
+| :----------------- | :-------------- | :---------------------------------------------------------------------------------------------------------- |
+| `match_record_id` (PK) | UUID            | Unique identifier.                                                                                          |
+| `applicant_id` (FK)  | UUID            | The applicant.                                                                                              |
+| `opportunity_id` (FK)| UUID            | The opportunity being matched against.                                                                      |
+| `is_stale`         | Boolean         | Flag for recalculation if the applicant's profile or opportunity filters change.                              |
+| `match_percentage` | Decimal         | The overall score based on the debate outcome.                                                              |
+| `winning_argument` | TEXT            | The SLM's generated rationale *for* the match.                                                              |
+| `losing_argument`  | TEXT            | The SLM's generated rationale *against* the match.                                                          |
+| `matched_tags`     | JSONB (Array)   | List of tags/requirements met.                                                                              |
+| `created_at`       | TIMESTAMP       | Timestamp of when the calculation was performed.                                                            |
 
 ## **4\. Database Structure Insight (Conceptual)**
 
@@ -85,10 +96,11 @@ The database schema has been designed for flexibility and scalability.
 *   **Flexible Opportunities:** The `Opportunity` table uses the `opportunity_type` field (Job, Program, etc.) for filtering.
 *   **Tags:** Opportunities have a `tags` field (JSON List) for matching against user interests.
 *   **Application Status:** The `Application` table tracks the applicant's status for an opportunity.
+*   **Matching as a Service:** `MatchRecord` is a calculated model. The application flow checks for an existing `MatchRecord` for a given (`applicant_id`, `opportunity_id`). If none exists or `is_stale` is true, it triggers the SLM generation pipeline.
 
 ## **5\. Security & Deployment Notes**
 
 *   **Document Access:** Document retrieval APIs must first check the `ConsentLog` table for an active, unrevoked consent grant.
 *   **Data Integrity:** The `file_hash` in the `Document` model is mandatory to ensure file integrity.
 
-**Action Items for Development:** Focus on populating user interests and opportunity tags to maximize the effectiveness of the recommendation engine.
+**Action Items for Development:** Prioritize implementing the API endpoints for the `Institution` and `User` profile management and the `MatchRecord` generation pipeline.

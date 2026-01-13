@@ -1,12 +1,14 @@
 from django.utils import timezone
+from .models import MatchRecord
 import logging
 
 logger = logging.getLogger(__name__)
 
 class RecommendationEngine:
     """
-    Tag-based recommendation engine using Jaccard Similarity.
-    Replaces the previous Word2Vec/SLM based engine.
+    Hybrid Recommendation Engine.
+    1. Applicant View: Tag-based Jaccard Similarity for sorting/recommendation.
+    2. Institution View: Explainable AI (simulated) for detailed Match Records.
     """
     _instance = None
 
@@ -40,8 +42,6 @@ class RecommendationEngine:
         based on the applicant's interests and the opportunity's tags.
         """
         user_interests = applicant.interests or []
-        # We treat interests as a list of strings.
-        # Ensure they are strings and strip whitespace
         user_interests = [str(i).strip().lower() for i in user_interests if i]
 
         opp_tags = opportunity.tags or []
@@ -63,8 +63,6 @@ class RecommendationEngine:
         for opp in opportunities:
             score = self.calculate_match_score(applicant, opp)
 
-            # Determine expiry status
-            # Non-expired (future or null) is higher priority than expired (past)
             is_expired = False
             if opp.expiry_date and opp.expiry_date < now:
                 is_expired = True
@@ -75,15 +73,11 @@ class RecommendationEngine:
                 'is_expired': is_expired
             })
 
-        # Sort
-        # Key 1: is_expired (False=0 first, True=1 last)
-        # Key 2: score (Descending) -> usage of negative score
         sorted_data = sorted(
             scored_opportunities,
             key=lambda x: (x['is_expired'], -x['score'])
         )
 
-        # Extract opportunities and attach score for display
         sorted_opps = []
         for item in sorted_data:
             opp = item['opportunity']
@@ -91,3 +85,51 @@ class RecommendationEngine:
             sorted_opps.append(opp)
 
         return sorted_opps
+
+    def generate_match_record(self, applicant, opportunity):
+        """
+        Generates a persistent MatchRecord with "Explainable AI" arguments.
+        This simulates the SLM debate process by analyzing tags.
+        """
+        # 1. Input Gathering
+        user_interests = set([str(i).strip().lower() for i in (applicant.interests or []) if i])
+        opp_tags = set([str(t).strip().lower() for t in (opportunity.tags or []) if t])
+
+        matched_tags = list(user_interests.intersection(opp_tags))
+        missing_tags = list(opp_tags.difference(user_interests))
+
+        # 2. Percentage Calculation (Reuse Jaccard for consistency, or weighted)
+        score = self.calculate_match_score(applicant, opportunity)
+        match_percentage = round(score * 100, 2)
+
+        # 3. SLM Generation (The Debate) - Rule-based simulation
+        # Winning Argument
+        if matched_tags:
+            winning_arg = f"The applicant possesses the following relevant interests that align with the opportunity: {', '.join(matched_tags)}."
+            if len(matched_tags) == len(opp_tags):
+                winning_arg += " They are a perfect match for the stated requirements."
+            elif len(matched_tags) > len(opp_tags) / 2:
+                winning_arg += " They cover a significant portion of the requirements."
+        else:
+            winning_arg = "The applicant shows potential but does not explicitly list interests matching the opportunity's tags. However, their profile may still hold relevance."
+
+        # Losing Argument
+        if missing_tags:
+            losing_arg = f"The applicant is missing the following key tags associated with this opportunity: {', '.join(missing_tags)}."
+        else:
+            losing_arg = "The applicant appears to meet all listed tag requirements, though soft skills and other factors should be verified."
+
+        # 4. Persistence
+        match_record, created = MatchRecord.objects.update_or_create(
+            applicant=applicant,
+            opportunity=opportunity,
+            defaults={
+                'match_percentage': match_percentage,
+                'winning_argument': winning_arg,
+                'losing_argument': losing_arg,
+                'matched_tags': matched_tags,
+                'is_stale': False
+            }
+        )
+
+        return match_record
