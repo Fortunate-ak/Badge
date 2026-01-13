@@ -25,7 +25,7 @@ export async function LogoutUser() {
 }
 
 
-export async function RegisterUser(email: string, password: string, first_name: string, last_name: string, bio: string, dob: string | Date, is_institution_staff: boolean, password_confirm : string) {
+export async function RegisterUser(email: string, password: string, first_name: string, last_name: string, bio: string, dob: string | Date, is_institution_staff: boolean, password_confirm : string, interests: string[]) {
     let response = await customFetch('/api/auth/register/', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -37,7 +37,8 @@ export async function RegisterUser(email: string, password: string, first_name: 
             bio,
             dob,
             is_institution_staff,
-            password_confirm
+            password_confirm,
+            interests
         })
     });
     if (response.status == 400) {

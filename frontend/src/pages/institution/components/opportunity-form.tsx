@@ -78,32 +78,17 @@ export default function OpportunityForm({
 
             <input
                 type="text"
-                name="positive_tags"
-                id="positive_tags"
-                value={values.positive_tags?.join(", ")}
+                name="tags"
+                id="tags"
+                value={values.tags?.join(", ")}
                 onChange={(e) =>
                     setValues({
                         ...values,
-                        positive_tags: e.target.value.split(",").map((t) => t.trim()),
+                        tags: e.target.value.split(",").map((t) => t.trim()),
                     })
                 }
                 className="tw-input"
-                placeholder="Positive Tags (comma separated)"
-            />
-
-            <input
-                type="text"
-                name="negative_tags"
-                id="negative_tags"
-                value={values.negative_tags?.join(", ")}
-                onChange={(e) =>
-                    setValues({
-                        ...values,
-                        negative_tags: e.target.value.split(",").map((t) => t.trim()),
-                    })
-                }
-                className="tw-input"
-                placeholder="Negative Tags (comma separated)"
+                placeholder="Tags (comma separated)"
             />
 
 

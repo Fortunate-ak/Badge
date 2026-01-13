@@ -48,7 +48,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'email', 'password', 'password_confirm', 'first_name', 'last_name',
-            'bio', 'dob', 'is_applicant', 'is_institution_staff'
+            'bio', 'dob', 'is_applicant', 'is_institution_staff', 'interests'
         ]
 
     def validate(self, attrs):
@@ -66,7 +66,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             bio=validated_data.get('bio', ''),
             dob=validated_data.get('dob'),
             is_applicant=validated_data.get('is_applicant', True),
-            is_institution_staff=validated_data.get('is_institution_staff', False)
+            is_institution_staff=validated_data.get('is_institution_staff', False),
+            interests=validated_data.get('interests', [])
         )
         return user
 

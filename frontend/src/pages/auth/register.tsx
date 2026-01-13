@@ -14,7 +14,8 @@ export default function Register() {
         bio: "",
         dob: "",
         is_institution_staff: false,
-        password_confirm: ""
+        password_confirm: "",
+        interests: ""
     });
     const [error, setError] = React.useState<string | null>(null);
 
@@ -22,7 +23,8 @@ export default function Register() {
         e.preventDefault();
         console.log(values);
         try {
-            await RegisterUser(values.email, values.password, values.first_name, values.last_name, values.bio, values.dob, values.is_institution_staff, values.password_confirm);
+            const interestsList = values.interests ? values.interests.split(',').map((i: string) => i.trim()) : [];
+            await RegisterUser(values.email, values.password, values.first_name, values.last_name, values.bio, values.dob, values.is_institution_staff, values.password_confirm, interestsList);
             // Handle successful login (e.g., redirect or show a success message)
             navigate("/");
         } catch (error) {
@@ -57,7 +59,9 @@ export default function Register() {
                 <FormElement className="w-full md:col-span-2" title="Bio">
                     <textarea required name="bio" value={values.bio} onChange={handleChange} className="tw-input w-full" placeholder="Short Bio" />
                 </FormElement>
-                
+                <FormElement className="w-full md:col-span-2" title="Interests">
+                    <input name="interests" type="text" value={values.interests} onChange={handleChange} className="tw-input w-full" placeholder="Interests (comma separated)" />
+                </FormElement>
 
             </div>
 
