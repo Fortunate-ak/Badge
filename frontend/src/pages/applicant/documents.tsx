@@ -66,7 +66,7 @@ export default function Documents() {
                         ))
                     }
                 </select>
-                <input required onChange={(e) => {setValues({ ...values, file: (e.target?.files || [])[0] || null })}} name="file" accept="application/pdf" type="file" className="tw-input" />
+                <input required onChange={(e) => {setValues({ ...values, file: (e.target?.files || [])[0] || null })}} name="file" accept="application/pdf" type="file" className="tw-input cursor-pointer" />
                 <button type="submit" className="tw-button cursor-pointer">Upload Document</button>
             </form>
         </MinimalModal>
