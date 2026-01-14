@@ -27,7 +27,7 @@
   --shadow-primary-rgba: 91, 60, 240;      /* rgb for --color-primary */
 }
 
-@media (prefers-color-scheme: yello) {
+@media (prefers-color-scheme: dark) {
   :root {
     --color-background: #0b1220;           /* deep navy/dusk */
     --color-secondary: #0f1726;            /* panels in dark */
@@ -37,8 +37,8 @@
     --color-subtle-text: #b7c0d9;
 
     /* primary stays purple but becomes lighter for contrast */
-    --color-primary: #9d86ff;
-    --color-primary-foreground: #081027;
+    --color-primary: #463acb;
+    --color-primary-foreground: #ffffff;
     --color-accent: var(--color-primary);
     --color-accent-foreground: var(--color-primary-foreground);
 

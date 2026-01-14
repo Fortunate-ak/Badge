@@ -4,6 +4,8 @@ import useForm from "../../ui/use-form";
 import { useAuth } from "../../context/AuthContext";
 import { customFetch } from "../../utils";
 import type { User } from "../../types";
+import MultiSelect from "../../ui/multi-select";
+import tags from "../../assets/tags.json"
 
 export default function Profile() {
     const { user } = useAuth();
@@ -76,14 +78,8 @@ export default function Profile() {
                     <FormElement className="w-full md:col-span-2" title="Bio">
                         <textarea name="bio" value={values.bio} onChange={handleChange} className="tw-input w-full" />
                     </FormElement>
-                    <FormElement className="w-full md:col-span-2" title="Interests (comma separated)">
-                        <input
-                            name="interests"
-                            type="text"
-                            value={Array.isArray(values.interests) ? values.interests.join(", ") : values.interests}
-                            onChange={(e) => setValues({...values, interests: e.target.value.split(",").map(s => s.trim())})}
-                            className="tw-input w-full"
-                        />
+                    <FormElement className="w-full md:col-span-2" title="Interests">
+                        <MultiSelect onChange={(v) => {setValues({...values, interests:v})}} value={values.interests} placeholder="Type here..." options={tags} />
                     </FormElement>
                 </div>
                 <button type="submit" className="tw-button mt-4">Save Changes</button>

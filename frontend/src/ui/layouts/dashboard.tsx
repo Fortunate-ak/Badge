@@ -58,7 +58,7 @@ function Navigations() {
         <NavItem title="Home (Documents)" icon="home" path="/applicant" />
         <NavItem title="Opportunities" icon="explore" path='/opportunities' />
         <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
-        <NavItem title="Profile" icon="person" path='/profile' />
+        <NavItem title="Profile" icon="person" path='/applicant/profile' />
     </>
 
     // institution
