@@ -26,7 +26,7 @@ export default function Register() {
             const interestsList = values.interests ? values.interests.split(',').map((i: string) => i.trim()) : [];
             await RegisterUser(values.email, values.password, values.first_name, values.last_name, values.bio, values.dob, values.is_institution_staff, values.password_confirm, interestsList);
             // Handle successful login (e.g., redirect or show a success message)
-            navigate("/");
+            navigate("/applicant/profile"); // go straight to profile, to update bio and interests
         } catch (error) {
             setError((error as Error).message);
         }
@@ -48,7 +48,7 @@ export default function Register() {
                     <input required name="password_confirm" type="password" value={values.password_confirm} onChange={handleChange} className="tw-input w-full" placeholder="Confirm Password" />
                 </FormElement>
                 <FormElement className="w-full" title="Date of Birth">
-                    <input required name="dob" type="date" value={values.dob} onChange={handleChange} className="tw-input w-full" placeholder="Date of Birth" />
+                    <input required name="dob" type="date" value={values.dob} onChange={handleChange} className="tw-input w-full" />
                 </FormElement>
                 <FormElement className="w-full" title="First Name">
                     <input required name="first_name" type="text" value={values.first_name} onChange={handleChange} className="tw-input w-full" placeholder="First Name" />
@@ -56,12 +56,12 @@ export default function Register() {
                 <FormElement className="w-full" title="Last Name">
                     <input required name="last_name" type="text" value={values.last_name} onChange={handleChange} className="tw-input w-full" placeholder="Last Name" />
                 </FormElement>
-                <FormElement className="w-full md:col-span-2" title="Bio">
+                {/*<FormElement className="w-full md:col-span-2" title="Bio">
                     <textarea required name="bio" value={values.bio} onChange={handleChange} className="tw-input w-full" placeholder="Short Bio" />
                 </FormElement>
                 <FormElement className="w-full md:col-span-2" title="Interests">
                     <input name="interests" type="text" value={values.interests} onChange={handleChange} className="tw-input w-full" placeholder="Interests (comma separated)" />
-                </FormElement>
+                </FormElement>*/}
 
             </div>
 
