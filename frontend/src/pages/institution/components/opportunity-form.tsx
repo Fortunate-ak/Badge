@@ -1,6 +1,8 @@
 import useForm from "../../../ui/use-form";
 import type { Opportunity } from "../../../types";
 import { useAuth } from "../../../context/AuthContext";
+import tags from "../../../assets/tags.json"
+import MultiSelect from "../../../ui/multi-select";
 
 export default function OpportunityForm({
     opportunity,
@@ -17,8 +19,6 @@ export default function OpportunityForm({
             content: "",
             opportunity_type: "Job",
             tags: [],
-            positive_tags: [],
-            negative_tags: [],
             start_date: "",
             expiry_date: "",
             posted_by_institution : user?.institution_details?.[0]?.id,
@@ -76,22 +76,8 @@ export default function OpportunityForm({
                 placeholder="Content"
             />
 
-            <input
-                type="text"
-                name="tags"
-                id="tags"
-                value={values.tags?.join(", ")}
-                onChange={(e) =>
-                    setValues({
-                        ...values,
-                        tags: e.target.value.split(",").map((t) => t.trim()),
-                    })
-                }
-                className="tw-input"
-                placeholder="Tags (comma separated)"
-            />
-
-
+            <MultiSelect onChange={(v) => {setValues({...values, tags:v})}} value={values.tags} placeholder="Tags" options={tags} />
+            
             <div className="md:grid md:grid-cols-2 flex flex-col gap-4">
                 <input type="date" onChange={handleChange} name="start_date" placeholder="Start Date" className="tw-input" required />
                 <input type="date" onChange={handleChange} name="expiry_date" placeholder="Expiry Date" className="tw-input" required />
@@ -112,7 +98,7 @@ export default function OpportunityForm({
                 }
             </select>
 
-            <button type="submit" className="tw-button">
+            <button type="submit" className="tw-button cursor-pointer">
                 {opportunity ? "Update" : "Create"} Opportunity
             </button>
         </form>
