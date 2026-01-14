@@ -18,8 +18,7 @@ class OpportunitySerializer(serializers.ModelSerializer):
         model = Opportunity
         fields = [
             'id', 'title', 'description', 'content', 'opportunity_type',
-            'posted_by_institution', 'institution_details', 'filters', 'tags',
-            'positive_tags', 'negative_tags', 'start_date', 'expiry_date',
+            'posted_by_institution', 'institution_details', 'tags', 'start_date', 'expiry_date',
             'created_at', 'updated_at', 'match_score', 'has_applied'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'institution_details', 'match_score', 'has_applied']

@@ -9,7 +9,6 @@ class OpportunityAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('id', 'title', 'opportunity_type', 'posted_by_institution')}),
         ('Description', {'fields': ('description', 'content')}),
-        ('Filters & Tags', {'fields': ('filters', 'tags')}),
         ('Timestamps', {'fields': ('created_at', 'updated_at')}),
     )
 

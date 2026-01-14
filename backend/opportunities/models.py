@@ -19,12 +19,9 @@ class Opportunity(models.Model):
     content = models.TextField() # The full on description of the content
     opportunity_type = models.CharField(max_length=20, choices=OPPORTUNITY_TYPES)
     posted_by_institution = models.ForeignKey('institutions.Institution', on_delete=models.CASCADE, related_name='opportunities')
-    filters = models.JSONField(default=dict, help_text="e.g., required qualifications, minimum GPA")
+
     tags = models.JSONField(default=list, help_text="List of keywords or tags for matching")
 
-    # Recommendation Engine Fields
-    positive_tags = models.JSONField(default=list, blank=True, help_text="Tags that reward the match score")
-    negative_tags = models.JSONField(default=list, blank=True, help_text="Tags that penalize the match score")
     start_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
 

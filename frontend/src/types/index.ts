@@ -116,10 +116,7 @@ export interface Opportunity {
   opportunity_type: 'Job' | 'Program' | 'Scholarship' | 'Admission';
   posted_by_institution: string; // Institution ID
   institution_details?: Institution; // Nested institution details (read-only)
-  filters: Record<string, any>;
   tags: string[];
-  positive_tags?: string[];
-  negative_tags?: string[];
   start_date?: string;
   expiry_date?: string;
   match_score?: number;
