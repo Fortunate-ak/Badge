@@ -31,8 +31,8 @@
   :root {
     --color-background: #0b1220;           /* deep navy/dusk */
     --color-secondary: #0f1726;            /* panels in dark */
-    --color-muted: #0d1b34;
-    --color-border: #162033;
+    --color-muted: #515864;
+    --color-border: #253045;
     --color-foreground: #e6eefc;           /* pale text for contrast */
     --color-subtle-text: #b7c0d9;
 
@@ -236,7 +236,7 @@ table *.tw-button, table *.tw-button-secondary {
 }
 
 @utility tw-tag{
-  @apply text-xs bg-border/50 text-foreground rounded-full px-2 py-1 group-hover:text-white;
+  @apply text-xs bg-foreground/7 text-foreground rounded-full px-2 py-1 group-hover:text-white;
 }
 @utility tw-dashboard-grid{
   @apply grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4;
