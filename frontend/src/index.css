@@ -340,19 +340,17 @@ hr {
   border-radius: 16px;
 }
 
+input[type="date"]:is([placeholder]){
+  color: var(--color-foreground);
+  &::before {
+    color: #999999;
+    content: attr(placeholder);
+  }
+  &:focus:valid{
+    color: #666666;
+  }
 
-input[type="date"]::before {
-	color: #999999;
-	content: attr(placeholder);
-}
-input[type="date"] {
-	color: var(--color-foreground);
-}
-input[type="date"]:focus,
-input[type="date"]:valid {
-	color: #666666;
-}
-input[type="date"]:focus::before,
-input[type="date"]:valid::before {
-	content: "" !important;
+  &:is(:focus::before, :valid::before){
+    content: "" !important;
+  }
 }
