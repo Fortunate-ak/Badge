@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function CreateInstitutionPage() {
     const navigate = useNavigate();
+    const authconte = useAuth();
     
     const { values, handleChange } = useForm<Partial<Institution>>({
         name : "",
@@ -24,6 +25,7 @@ export default function CreateInstitutionPage() {
         console.log("Form submitted with values:", values);
         institutionService.create(values).then(console.log).finally(() => {
             navigate("/institution");
+            authconte.refresh()
         });
     }
 
@@ -41,7 +43,7 @@ export default function CreateInstitutionPage() {
     <input className="tw-input" type="text" name="address" value={values.address} onChange={handleChange} placeholder="Address" />
     <input className="tw-input" type="email" name="email" value={values.email} onChange={handleChange} placeholder="Email" />
     <input className="tw-input" type="tel" name="phone" value={values.phone} onChange={handleChange} placeholder="Phone" />
-    <textarea className="tw-textarea" name="description" value={values.description} onChange={handleChange} placeholder="Description" rows={4} />
+    <textarea className="tw-input" name="description" value={values.description} onChange={handleChange} placeholder="Description" rows={4} />
     <button className="tw-button" type="submit">Create Institution</button>
   </form>;
 }
