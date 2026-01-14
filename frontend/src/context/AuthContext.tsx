@@ -13,6 +13,7 @@ interface AuthContextType {
   login: typeof LoginUser;
   logout: typeof LogoutUser;
   register: typeof RegisterUser;
+  refresh: () => void;
 }
 
 /**
@@ -45,20 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  async function fetchUser() {
+    try {
+      const currentUser = await GetCurrentUser();
+      setUser(currentUser);
+    } catch (err) {
+      setError('Failed to fetch user.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   /**
    * Fetches the current user on initial load.
    */
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        const currentUser = await GetCurrentUser();
-        setUser(currentUser);
-      } catch (err) {
-        setError('Failed to fetch user.');
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchUser();
   }, []);
 
@@ -139,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     logout,
     register,
+    refresh : fetchUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
