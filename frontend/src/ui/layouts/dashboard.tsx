@@ -23,7 +23,7 @@ export default function Dashboard({ title = "Badge", className = "" }: { title?:
 
 
         <nav className='flex items-center justify-center z-10 md:hidden fixed bottom-4 w-full'>
-            <div className='bg-primary *:text-white rounded-r-full rounded-l-full flex flex-row items-center justify-around gap-4 p-3 shadow-lg w-3/4'>
+            <div className='bg-primary empty:bg-transparent *:text-white rounded-r-full rounded-l-full flex flex-row items-center justify-around gap-4 p-3 shadow-lg w-3/4'>
                 <Navigations />
             </div>
         </nav>
@@ -52,9 +52,10 @@ export default function Dashboard({ title = "Badge", className = "" }: { title?:
 
 function Navigations() {
 
-    const { user } = useAuth()
+    const { user } = useAuth();
+    const location = useLocation();
     // applicant
-    if (user && !user.is_institution_staff) return <>
+    if (user && !user.is_institution_staff && !location.pathname.includes("institution")) return <>
         <NavItem title="Home (Documents)" icon="home" path="/applicant" />
         <NavItem title="Opportunities" icon="explore" path='/opportunities' />
         <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
