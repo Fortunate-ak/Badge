@@ -96,6 +96,8 @@ class InstitutionViewSet(viewsets.ModelViewSet):
             return Response({'error': 'User is already staff.'}, status=status.HTTP_400_BAD_REQUEST)
 
         InstitutionStaff.objects.create(institution=institution, user=user, is_admin=is_admin)
+        user.is_institution_staff = True
+        user.save()
         return Response({'status': 'Staff member added.'}, status=status.HTTP_201_CREATED)
 
 class InstitutionStaffViewSet(viewsets.ModelViewSet):
