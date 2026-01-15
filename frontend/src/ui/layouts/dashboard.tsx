@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import { Outlet, useLocation, Link, useNavigate } from "react-router";
 import { AuthProvider, useAuth } from '../../context/AuthContext';
 import type { User } from '../../types';
 
 export default function Dashboard({ title = "Badge", className = "" }: { title?: string, className?: string }) {
     const navigate = useNavigate()
-
 
     return <AuthProvider><div className='dashboard-container flex flex-row w-full h-screen p-0 *:p-2'>
 
