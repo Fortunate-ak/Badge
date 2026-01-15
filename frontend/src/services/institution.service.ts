@@ -31,13 +31,27 @@ export const institutionService = {
   /**
    * Creates a new institution.
    */
-  async create(data: Partial<Institution>): Promise<Institution> {
+  async create(data: Partial<Institution> & { profile_image?: string | File }): Promise<Institution> {
+    let body: BodyInit;
+    let headers: HeadersInit = {};
+
+    if (data.profile_image instanceof File) {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+             formData.append(key, value as string | Blob);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(data);
+      headers = { 'Content-Type': 'application/json' };
+    }
+
     const response = await customFetch(`${API_URL}/institutions/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      headers,
+      body,
     });
     if (!response.ok) throw await response.json();
     return response.json();
@@ -46,13 +60,27 @@ export const institutionService = {
   /**
    * Updates an existing institution.
    */
-  async update(id: string, data: Partial<Institution>): Promise<Institution> {
+  async update(id: string, data: Partial<Institution> & { profile_image?: string | File }): Promise<Institution> {
+    let body: BodyInit;
+    let headers: HeadersInit = {};
+
+    if (data.profile_image instanceof File) {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+            formData.append(key, value as string | Blob);
+        }
+      });
+      body = formData;
+    } else {
+      body = JSON.stringify(data);
+      headers = { 'Content-Type': 'application/json' };
+    }
+
     const response = await customFetch(`${API_URL}/institutions/${id}/`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      headers,
+      body,
     });
     if (!response.ok) throw await response.json();
     return response.json();

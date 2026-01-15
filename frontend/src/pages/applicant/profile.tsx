@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormElement } from "../../ui/layouts/form";
 import useForm from "../../ui/use-form";
 import { useAuth } from "../../context/AuthContext";
-import { customFetch } from "../../utils";
+import { applicantService } from "../../services/applicant.service";
 import type { User } from "../../types";
 import MultiSelect from "../../ui/multi-select";
 import tags from "../../assets/tags.json"
@@ -16,6 +16,8 @@ export default function Profile() {
         dob: "",
         interests: []
     });
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     useEffect(() => {
         if (user) {
@@ -26,34 +28,34 @@ export default function Profile() {
                 dob: user.dob,
                 interests: user.interests || []
             });
+            if (user.profile_image) {
+                setImagePreview(user.profile_image);
+            }
         }
     }, [user]);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setSelectedFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Ensure interests is an array if edited as string (though here we handle it as string input converted to array)
-            // But useForm values are derived from User type which has interests: string[]
-            // We need to handle the input change for interests carefully.
-
-            // Note: Since UserViewSet inherits ModelViewSet, and we can access it via ID.
-            // However, typically users update their own profile.
-            // I'll check if there is a specific endpoint or if I should use /api/users/{id}/
-
             if (!user?.id) return;
 
-            const res = await customFetch(`/api/users/${user.id}/`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values)
-            });
-
-            if (res.ok) {
-                alert("Profile updated successfully!");
-                window.location.reload(); // Simple reload to refresh context
-            } else {
-                alert("Failed to update profile.");
+            const updateData: Partial<User> & { profile_image?: File } = { ...values };
+            if (selectedFile) {
+                updateData.profile_image = selectedFile;
             }
+
+            await applicantService.update(user.id, updateData);
+
+            alert("Profile updated successfully!");
+            window.location.reload();
 
         } catch (error) {
             console.error(error);
@@ -65,18 +67,34 @@ export default function Profile() {
         <div className="flex flex-col tw-container">
             <h1 className="tw-h1 text-center mb-4">Edit Profile</h1>
             <form onSubmit={handleSubmit} className="bg-background shadow p-6 rounded-md flex flex-col gap-3 w-full max-w-2xl mx-auto">
+
+                {/* Profile Image Section */}
+                <div className="flex flex-col items-center justify-center mb-6">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 mb-4 relative bg-gray-50 flex items-center justify-center shadow-sm">
+                        {imagePreview ? (
+                            <img src={imagePreview} alt="Profile Preview" className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="text-gray-300 text-5xl">👤</span>
+                        )}
+                    </div>
+                    <label className="cursor-pointer tw-button-secondary text-sm">
+                        Change Photo
+                        <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                    </label>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormElement className="w-full" title="First Name">
-                        <input name="first_name" type="text" value={values.first_name} onChange={handleChange} className="tw-input w-full" />
+                        <input name="first_name" type="text" value={values.first_name || ""} onChange={handleChange} className="tw-input w-full" />
                     </FormElement>
                     <FormElement className="w-full" title="Last Name">
-                        <input name="last_name" type="text" value={values.last_name} onChange={handleChange} className="tw-input w-full" />
+                        <input name="last_name" type="text" value={values.last_name || ""} onChange={handleChange} className="tw-input w-full" />
                     </FormElement>
                     <FormElement className="w-full" title="Date of Birth">
-                        <input name="dob" type="date" value={values.dob} onChange={handleChange} className="tw-input w-full" />
+                        <input name="dob" type="date" value={values.dob || ""} onChange={handleChange} className="tw-input w-full" />
                     </FormElement>
                     <FormElement className="w-full md:col-span-2" title="Bio">
-                        <textarea name="bio" value={values.bio} onChange={handleChange} className="tw-input w-full" />
+                        <textarea name="bio" value={values.bio || ""} onChange={handleChange} className="tw-input w-full" />
                     </FormElement>
                     <FormElement className="w-full md:col-span-2" title="Interests">
                         <MultiSelect onChange={(v) => {setValues({...values, interests:v})}} value={values.interests} placeholder="Type here..." options={tags} />
