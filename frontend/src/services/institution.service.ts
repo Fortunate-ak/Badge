@@ -59,6 +59,20 @@ export const institutionService = {
   },
 
   /**
+   * Updates or creates a profile image.
+   */
+  async uploadProfileImage(id: string, image: File): Promise<Institution> {
+    const formData = new FormData();
+    formData.append('profile_image', image);
+    const response = await customFetch(`${API_URL}/institutions/${id}/`, {
+      method: 'PATCH',
+      body: formData,
+    });
+    if (!response.ok) throw await response.json();
+    return response.json();
+  },
+
+  /**
    * Adds a staff member to an institution.
    * @param institutionId The institution ID
    * @param email The email of the user to add
