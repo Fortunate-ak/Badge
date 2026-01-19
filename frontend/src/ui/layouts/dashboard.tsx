@@ -1,6 +1,5 @@
 import { Outlet, useLocation, Link, useNavigate } from "react-router";
 import { AuthProvider, useAuth } from '../../context/AuthContext';
-import type { User } from '../../types';
 
 export default function Dashboard({ title = "Badge", className = "" }: { title?: string, className?: string }) {
     const navigate = useNavigate()
@@ -52,6 +51,7 @@ function Navigations() {
 
     const { user } = useAuth();
     const location = useLocation();
+
     // applicant
     if (user && !user.is_institution_staff && !location.pathname.includes("institution")) return <>
         <NavItem title="Home (Documents)" icon="home" path="/applicant" />
@@ -61,7 +61,7 @@ function Navigations() {
     </>
 
     // institution
-    else if (user && user.is_institution_staff) return <>
+    else if (user && user.is_institution_staff && location.pathname.includes("institution")) return <>
         <NavItem title="Home (Opportunities)" icon="home" path="/institution" />
         <NavItem title="Applicants" icon="group" path='/institution/applicants' />
         <NavItem title="Consent" icon="order_approve" path='/institution/consent' />
@@ -88,8 +88,11 @@ function NavItem({ title, icon, path = "" }: { title: string, icon: string, path
 function ProfileButton() {
     const { user } = useAuth()
     return <div title={user?.first_name + " " + user?.last_name} className='overflow-x-clip w-full flex items-center justify-center'>
-            <div className={'rounded-full size-8 text-sm flex items-center justify-center p-2 bg-secondary text-foreground border border-border ' + (user?.is_institution_staff ? "bg-primary! text-white" : "")}>
+        {
+            user?.profile_image ? <img src={user?.profile_image} alt="Profile" className={'rounded-full size-8 object-cover border-2' + (user?.is_institution_staff ? "border-primary" : "border-border")} />
+            : <div className={'rounded-full size-8 text-sm flex items-center justify-center p-2 bg-secondary text-foreground border border-border ' + (user?.is_institution_staff ? "bg-primary! text-white" : "")}>
                 {user?.first_name[0]}
             </div>
+        }
     </div>
 }

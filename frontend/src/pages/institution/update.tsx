@@ -34,7 +34,9 @@ export default function UpdateInstitutionPage() {
             const { profile_image, ...rest } = data;
             setValues(rest);
             if (profile_image) {
-                setImagePreview(profile_image);
+                let mytemp_url = new URL(profile_image);
+                mytemp_url.host = window.location.host;
+                setImagePreview(mytemp_url.href);
             }
         });
     }, [id]);

@@ -6,9 +6,15 @@ import { applicantService } from "../../services/applicant.service";
 import type { User } from "../../types";
 import MultiSelect from "../../ui/multi-select";
 import tags from "../../assets/tags.json"
+import { useToast } from "../../context/ToastContext";
+import { useNavigate } from "react-router";
+
 
 export default function Profile() {
     const { user } = useAuth();
+    const toast = useToast();
+    const navigate = useNavigate();
+
     const { values, handleChange, setValues } = useForm<Partial<User>>({
         first_name: "",
         last_name: "",
@@ -54,8 +60,9 @@ export default function Profile() {
 
             await applicantService.update(user.id, updateData);
 
-            alert("Profile updated successfully!");
-            window.location.reload();
+            toast.success("Profile updated successfully!");
+            navigate('.', { replace: true });
+            //window.location.reload();
 
         } catch (error) {
             console.error(error);
