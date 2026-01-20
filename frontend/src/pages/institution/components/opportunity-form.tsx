@@ -1,8 +1,10 @@
 import useForm from "../../../ui/use-form";
-import type { Opportunity } from "../../../types";
+import type { DocumentCategory, Opportunity } from "../../../types";
 import { useAuth } from "../../../context/AuthContext";
 import tags from "../../../assets/tags.json"
 import MultiSelect from "../../../ui/multi-select";
+import { useEffect, useState } from "react";
+import { documentService } from "../../../services/document.service";
 
 export default function OpportunityForm({
     opportunity,
@@ -12,6 +14,7 @@ export default function OpportunityForm({
     onSubmit: (opportunity: Partial<Opportunity>) => void;
 }) {
     const { user } = useAuth();
+    const [categories, setCategories] = useState<DocumentCategory[]>([]);
     const { values, handleChange, setValues } = useForm<Partial<Opportunity>>(
         opportunity || {
             title: "",
@@ -21,9 +24,18 @@ export default function OpportunityForm({
             tags: [],
             start_date: "",
             expiry_date: "",
-            posted_by_institution : user?.institution_details?.[0]?.id,
+            posted_by_institution: user?.institution_details?.[0]?.id,
+            document_categories: []
         }
     );
+
+    useEffect(() => {
+        documentService.getCategories().then((fetchedCategories) => {
+            setCategories(fetchedCategories);
+        }).catch((err) => {
+            console.error("Error fetching categories:", err);
+        });
+    }, [])
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -76,8 +88,8 @@ export default function OpportunityForm({
                 placeholder="Content"
             />
 
-            <MultiSelect onChange={(v) => {setValues({...values, tags:v})}} value={values.tags} placeholder="Tags" options={tags} />
-            
+            <MultiSelect onChange={(v) => { setValues({ ...values, tags: v }) }} value={values.tags} placeholder="Tags" options={tags} />
+
             <div className="md:grid md:grid-cols-2 flex flex-col gap-4">
                 <input type="date" onChange={handleChange} name="start_date" placeholder="Start Date" className="tw-input" required />
                 <input type="date" onChange={handleChange} name="expiry_date" placeholder="Expiry Date" className="tw-input" required />
@@ -94,6 +106,18 @@ export default function OpportunityForm({
                 {
                     user?.institution_details?.map((inst) => (
                         <option key={inst.id} value={inst.id}>{inst.name}</option>
+                    ))
+                }
+            </select>
+
+
+            <select name="document_categories" multiple required onChange={(e) => {
+                const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                setValues({ ...values, document_categories: selectedOptions });
+            }} className="tw-input">
+                <option disabled value="">Select Documents Categories</option>
+                {
+                    categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))
                 }
             </select>

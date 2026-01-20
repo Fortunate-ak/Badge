@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DocumentCategoryService from "../../../services/document-category.service";
+import {documentService} from "../../../services/document.service";
 import type { DocumentCategory } from "../../../types";
 import useForm from "../../../ui/use-form";
 
@@ -16,7 +16,7 @@ export default function ConsentRequestModal({
     }>({});
 
     useEffect(() => {
-        DocumentCategoryService.getAll().then(setCategories);
+        documentService.getCategories().then(setCategories);
     }, []);
 
     const handleSubmit = (e: React.FormEvent) => {

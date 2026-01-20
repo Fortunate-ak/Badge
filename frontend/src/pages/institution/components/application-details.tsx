@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { applicationService} from "../../../services/application.service";
 import { consentService } from "../../../services/consent.service";
-import type { Application } from "../../../types";
+import type { ApplicationDetail } from "../../../types";
 import { useParams } from "react-router";
 import Modal, { type ModalHandle } from "../../../ui/layouts/modal";
 import ConsentRequestModal from "./consent-request-modal";
+import { useToast } from "../../../context/ToastContext";
 
 export default function ApplicationDetails() {
     const { id } = useParams<{ id: string }>();
-    const [application, setApplication] = useState<Application | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const toast = useToast();
+    const [application, setApplication] = useState<ApplicationDetail | null>(null);
     const modalRef = useRef<ModalHandle | null>(null);
 
     useEffect(() => {
@@ -23,8 +24,10 @@ export default function ApplicationDetails() {
             consentService.create({
                 applicant: application.applicant.id,
                 document_categories: categoryIds,
+                requester_institution:application.opportunity.posted_by_institution
             }).then(() => {
                 modalRef.current?.close();
+                toast.success("Consent Sent. ");
             });
         }
     };

@@ -1,24 +1,25 @@
+import type { ConsentLog, Institution } from "../types";
 import { timeAgo } from "../utils";
 
-export default function ConsentCard({ title, tags, company, logo, timestamp } : {title:string;tags:string[];company:string;logo:string;timestamp:string;}) {
-    return <div className="rounded-lg p-4 flex flex-col gap-1 bg-primary/10 cursor-pointer transition-all **:transition-all hover:bg-primary/20">
+export default function ConsentCard({ value } : {value:ConsentLog}) {
+    const logo = (new URL(value.requester_institution_details?.profile_image || "")).pathname;
+    return <div className="rounded-lg p-4 flex flex-col gap-2 bg-primary/10 cursor-pointer transition-all **:transition-all hover:bg-primary/20">
         <div className="flex flex-row items-start justify-between">
-            {logo && <img src={logo} className="size-8 rounded-full border border-border p-1" />}
-            <span className="border border-primary p-1 text-primary rounded-md text-xs scale-80">
-                Verified
-            </span>
-        </div>
-        <div className="flex flex-row items-center justify-between">
-            <span className="text-xs font-semibold">{company}</span>
-            <span className="text-xs">{timeAgo(timestamp)}</span>
-        </div>
-        <h2 className="text-xl font-bold">{title}</h2>
-        <div className="flex flex-row flex-wrap gap-2">
-        {
-            tags.map(tag => <span key={tag} className="tw-tag">{tag}</span>)
-        }
+            <div className="flex flex-row items-center justify-between gap-2">
+                {logo && <img src={logo} className="size-8 rounded-full border border-border p-0.5" />}
+                <span className="text-xs font-semibold">{value.requester_institution_details?.name}</span>
+            </div>
+            <span className="text-xs opacity-50">{timeAgo(value.created_at)}</span>
         </div>
         
+        <div className="flex flex-row flex-wrap gap-2">
+        {
+            value.document_categories_details?.map(tag => <span key={tag.id} className="tw-tag px-2 lowercase first-letter:uppercase">{tag.name}</span>)
+        }
+        </div>
 
+        <div className="grid grid-cols-1 gap-2 text-sm!">
+            {value.is_granted ? <button className="tw-button-secondary tw-button-sm text-sm cursor-pointer">REJECT</button> : <button className="tw-button tw-button-sm text-sm cursor-pointer">ACCEPT</button>}
+        </div>
     </div>
 }

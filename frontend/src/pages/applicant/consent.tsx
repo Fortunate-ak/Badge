@@ -16,7 +16,7 @@ export default function Consent() {
 
     return <div className="tw-dashboard-grid">
         {
-            consents.map((content, index) => <ConsentCard key={index} title={content.id} tags={content.document_categories} company={(content.requester_institution as Institution).name} logo={(content.requester_institution as Institution).profile_image || ""} timestamp={content.created_at} />)
+            consents.map((content, index) => <ConsentCard key={index} value={content} />)
         }
     </div>
 }

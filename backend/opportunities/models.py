@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 import uuid
+from documents.models import DocumentCategory
 
 class Opportunity(models.Model):
     """
@@ -21,6 +22,8 @@ class Opportunity(models.Model):
     posted_by_institution = models.ForeignKey('institutions.Institution', on_delete=models.CASCADE, related_name='opportunities')
 
     tags = models.JSONField(default=list, help_text="List of keywords or tags for matching")
+    
+    document_categories = models.ManyToManyField(DocumentCategory, blank=True, related_name='opportunities', help_text="Document categories required for this opportunity")
 
     start_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)

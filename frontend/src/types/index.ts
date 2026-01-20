@@ -76,7 +76,8 @@ export interface Document {
   uploaded_by: string; // User ID
   created_at: string;
   updated_at: string;
-  file?: File; // Virtual field for upload
+  file?: File | string; // Virtual field for upload
+  document_categories_details?:DocumentCategory[];
 }
 
 /**
@@ -97,12 +98,14 @@ export interface Verification {
  */
 export interface ConsentLog {
   id: string;
-  applicant: string; // User ID
-  requester_institution: string | Institution; // Institution ID or object
+  applicant: string|number; // User ID
+  requester_institution: string; // Institution ID
   document_categories: string[]; // Array of DocumentCategory IDs
   is_granted: boolean;
   created_at: string;
   revoked_at?: string;
+  document_categories_details?:DocumentCategory[];
+  requester_institution_details?:Institution;
 }
 
 /**
@@ -124,6 +127,8 @@ export interface Opportunity {
   updated_at: string;
   applicant_count?: number;
   has_applied?: boolean;
+  document_categories?: string[]; // Array of DocumentCategory IDs
+  document_categories_details?:DocumentCategory[];
 }
 
 export interface Applicant {

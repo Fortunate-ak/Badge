@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import Opportunity, Application, MatchRecord
 from institutions.serializers import InstitutionSerializer
+from documents.serializers import DocumentCategorySerializer
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -13,15 +14,16 @@ class OpportunitySerializer(serializers.ModelSerializer):
     institution_details = InstitutionSerializer(source='posted_by_institution', read_only=True)
     match_score = serializers.FloatField(read_only=True, required=False)
     has_applied = serializers.SerializerMethodField()
+    document_categories_details = DocumentCategorySerializer(source='document_categories', many=True, read_only=True)
 
     class Meta:
         model = Opportunity
         fields = [
             'id', 'title', 'description', 'content', 'opportunity_type',
             'posted_by_institution', 'institution_details', 'tags', 'start_date', 'expiry_date',
-            'created_at', 'updated_at', 'match_score', 'has_applied'
+            'created_at', 'updated_at', 'match_score', 'has_applied', 'document_categories', 'document_categories_details'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'institution_details', 'match_score', 'has_applied']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'institution_details', 'match_score', 'has_applied', 'document_categories_details']
 
     def get_has_applied(self, obj):
         user = self.context['request'].user

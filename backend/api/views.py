@@ -172,7 +172,7 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return ConsentLog.objects.filter(Q(applicant=user) | Q(requester_institution__admins__user=user)).distinct()
+        return ConsentLog.objects.filter(Q(applicant=user) | Q(requester_institution__admins__in=User.objects.filter(id=user.id))).distinct()
 
     @action(detail=True, methods=['post'], url_path='revoke')
     def revoke(self, request, pk=None):
@@ -183,6 +183,50 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
         consent.revoked_at = timezone.now()
         consent.save()
         return Response({'status': 'Consent revoked.'})
+    
+    @action(detail=True, methods=['get'], url_path='accept')
+    def accept(self, request, pk=None):
+        consent = self.get_object()
+        if consent.applicant != request.user:
+             return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+        consent.is_granted = True
+        consent.save()
+        return Response({'status': 'Consent accepted.'})
+    
+    @action(detail=False, methods=['post'], url_path='check')
+    def check(self, request):
+        """Check if a university has consent to view specific document categories."""
+        document_category_ids = request.data.get('document_categories', [])
+        institution_id = request.data.get('institution_id')
+        applicant_id = request.data.get('applicant_id')
+
+        if not all([document_category_ids, institution_id, applicant_id]):
+            return Response(
+                {'error': 'document_categories, institution_id, and applicant_id are required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Get all accepted consents for this applicant and institution
+        consents = ConsentLog.objects.filter(
+            applicant__pk=applicant_id,
+            requester_institution__id=institution_id,
+            is_granted=True,
+            revoked_at__isnull=True
+        )
+
+        # Get consented document categories
+        consented_categories = set(
+            consents.values_list('document_categories', flat=True)
+        )
+
+        # Build response dict
+        result = {
+            category_id: category_id in consented_categories
+            for category_id in document_category_ids
+        }
+
+        return Response(result)
+        
 
 class OpportunityViewSet(viewsets.ModelViewSet):
     """

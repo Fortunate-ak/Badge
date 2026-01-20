@@ -2,7 +2,6 @@ import { useNavigate } from "react-router";
 import { opportunityService } from "../../services/opportunity.service";
 import type { Opportunity } from "../../types";
 import OpportunityForm from "./components/opportunity-form";
-import { useAuth } from "../../context/AuthContext";
 
 
 export default function CreateOpportunity() {
