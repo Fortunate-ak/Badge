@@ -2,8 +2,9 @@
 from rest_framework import serializers
 from .models import Opportunity, Application, MatchRecord
 from institutions.serializers import InstitutionSerializer
-from documents.serializers import DocumentCategorySerializer
+from documents.serializers import DocumentCategorySerializer, DocumentSerializer
 from django.contrib.auth import get_user_model
+from documents.models import ConsentLog
 
 User = get_user_model()
 
@@ -64,9 +65,29 @@ class ApplicationDetailSerializer(ApplicationSerializer):
     Detailed serializer for a single application, including more context.
     """
     opportunity = OpportunitySerializer(read_only=True)
+    documents = serializers.SerializerMethodField()
 
     class Meta(ApplicationSerializer.Meta):
-        fields = ApplicationSerializer.Meta.fields + ['updated_at']
+        fields = ApplicationSerializer.Meta.fields + ['updated_at', 'documents']
+    
+    def get_documents(self, obj):
+        """
+        Get all documents where the institution has consent to view based on document categories.
+        """
+        institution = obj.opportunity.posted_by_institution
+        applicant = obj.applicant
+        
+        # Get all document categories the institution has consent to view
+        consented_categories = ConsentLog.objects.filter(
+            requester_institution=institution,
+            applicant=applicant,
+            is_granted=True
+        ).values_list('document_categories', flat=True).distinct()
+        
+        # Filter documents that belong to consented categories
+        documents = applicant.documents.filter(categories__in=consented_categories).distinct()
+        
+        return DocumentSerializer(documents, many=True).data
 
 class ApplicationCreateSerializer(serializers.ModelSerializer):
     """

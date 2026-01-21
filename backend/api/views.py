@@ -199,6 +199,11 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
         document_category_ids = request.data.get('document_categories', [])
         institution_id = request.data.get('institution_id')
         applicant_id = request.data.get('applicant_id')
+        
+        if len(document_category_ids) == 0:# Get all categories if not given any
+            document_category_ids = [str(doc_id) for doc_id in DocumentCategory.objects.values_list('id', flat=True)]
+            document_category_ids = list(document_category_ids)
+            
 
         if not all([document_category_ids, institution_id, applicant_id]):
             return Response(

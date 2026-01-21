@@ -162,6 +162,7 @@ export interface Application {
 
 export interface ApplicationDetail extends Application {
   opportunity: Opportunity;
+  documents:Document[];
 }
 
 

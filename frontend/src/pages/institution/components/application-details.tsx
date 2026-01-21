@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { applicationService} from "../../../services/application.service";
 import { consentService } from "../../../services/consent.service";
-import type { ApplicationDetail } from "../../../types";
+import type { ApplicationDetail, Document } from "../../../types";
 import { useParams } from "react-router";
 import Modal, { type ModalHandle } from "../../../ui/layouts/modal";
 import ConsentRequestModal from "./consent-request-modal";
 import { useToast } from "../../../context/ToastContext";
+import DocumentMiniCard from "../../../ui/document-mini-card";
+import { documentService } from "../../../services/document.service";
 
 export default function ApplicationDetails() {
     const { id } = useParams<{ id: string }>();
@@ -38,7 +40,7 @@ export default function ApplicationDetails() {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold">
+            <h1 className="tw-h1 text-3xl font-bold">
                 {application.applicant.first_name}{" "}
                 {application.applicant.last_name}
             </h1>
@@ -47,8 +49,12 @@ export default function ApplicationDetails() {
             </p>
             <div className="mt-8">
                 <h2 className="text-xl font-bold">Documents</h2>
-                <div className="flex flex-col gap-4 mt-4">
-                    {/* TODO: Display documents once consent is granted */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    {
+                        application.documents.map((val) => {
+                            return <DocumentMiniCard value={val} />
+                        })
+                    }
                 </div>
                 <button
                     className="tw-button mt-4"
