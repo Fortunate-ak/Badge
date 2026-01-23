@@ -1,7 +1,7 @@
 
 
 export default function DocumentCard({title, type, timestamp} : {title: string, type: string, timestamp?: string}) {
-    return <div className="flex flex-col bg-primary/10 rounded-md p-4 hover:bg-primary/20 transition-all cursor-pointer">
+    return <div className="flex flex-col p-4 border border-border rounded-md bg-secondary group transition-all cursor-pointer">
         <div className="flex flex-row justify-between items-center w-full">
             <span className="mso filled text-6xl font-bold text-muted">picture_as_pdf</span>
             <span className="mso text-xl">more_vert</span>

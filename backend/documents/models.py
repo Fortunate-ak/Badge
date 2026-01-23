@@ -168,4 +168,4 @@ class ConsentLog(models.Model):
     revoked_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Consent from {self.applicant.email}"
+        return f"Consent from {self.applicant.email} ({self.is_granted})"

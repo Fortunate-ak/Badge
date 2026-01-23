@@ -3,7 +3,7 @@ import { timeAgo } from "../utils";
 
 export default function ConsentCard({ value } : {value:ConsentLog}) {
     const logo = (new URL(value.requester_institution_details?.profile_image || "")).pathname;
-    return <div className="rounded-lg p-4 flex flex-col gap-2 bg-primary/10 cursor-pointer transition-all **:transition-all hover:bg-primary/20">
+    return <div className="p-4 border border-border rounded-md bg-secondary flex flex-col gap-2 cursor-pointer transition-all **:transition-all">
         <div className="flex flex-row items-start justify-between">
             <div className="flex flex-row items-center justify-between gap-2">
                 {logo && <img src={logo} className="size-8 rounded-full border border-border p-0.5" />}

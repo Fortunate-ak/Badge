@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import {documentService} from "../../../services/document.service";
 import type { DocumentCategory } from "../../../types";
 import useForm from "../../../ui/use-form";
+import { consentService } from "../../../services/consent.service";
 
 export default function ConsentRequestModal({
     onSubmit,
     onClose,
+    applicant_id,
+    institution_id
 }: {
     onSubmit: (categoryIds: string[]) => void;
     onClose: () => void;
+    applicant_id:string;
+    institution_id:string;
 }) {
     const [categories, setCategories] = useState<DocumentCategory[]>([]);
     const { values, handleChange, setValues } = useForm<{
@@ -16,7 +21,14 @@ export default function ConsentRequestModal({
     }>({});
 
     useEffect(() => {
-        documentService.getCategories().then(setCategories);
+        documentService.getCategories().then(async (cats) => {
+            let consent_cats = await consentService.check([], institution_id, applicant_id);
+            console.log(consent_cats, institution_id, applicant_id);
+            setCategories(
+                cats.filter(val => !consent_cats[val.id])// Only place the categories with a value of False, showing that they haven't been consented
+            )
+        });
+        
     }, []);
 
     const handleSubmit = (e: React.FormEvent) => {

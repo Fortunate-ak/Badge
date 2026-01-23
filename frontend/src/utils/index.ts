@@ -47,7 +47,6 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
 
 
 export function timeAgo(input: Date | string | number): string {
-  console.log("timeAgo input:", input);
   const now = new Date();
   const date = new Date(input);
 
@@ -71,6 +70,38 @@ export function timeAgo(input: Date | string | number): string {
     const count = Math.floor(seconds / interval.seconds);
     if (count >= 1) {
       return `${count} ${interval.label}${count > 1 ? "s" : ""} ago`;
+    }
+  }
+
+  return "just now";
+}
+
+
+export function timeLeft(input: Date | string | number): string {
+  console.log("Tiem Left", input)
+  const now = new Date();
+  const date = new Date(input);
+
+  const seconds = Math.floor((date.getTime() - now.getTime()) / 1000);
+
+  if (isNaN(seconds)) {
+    throw new Error("Invalid date passed to timeAgo()");
+  }
+
+  const intervals: { label: string; seconds: number }[] = [
+    { label: "year", seconds: 365 * 24 * 60 * 60 },
+    { label: "month", seconds: 30 * 24 * 60 * 60 },
+    { label: "week", seconds: 7 * 24 * 60 * 60 },
+    { label: "day", seconds: 24 * 60 * 60 },
+    { label: "hour", seconds: 60 * 60 },
+    { label: "minute", seconds: 60 },
+    { label: "second", seconds: 1 },
+  ];
+
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds);
+    if (count >= 1) {
+      return `${count} ${interval.label}${count > 1 ? "s" : ""} left`;
     }
   }
 

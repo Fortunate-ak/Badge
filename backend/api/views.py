@@ -201,7 +201,7 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
         applicant_id = request.data.get('applicant_id')
         
         if len(document_category_ids) == 0:# Get all categories if not given any
-            document_category_ids = [str(doc_id) for doc_id in DocumentCategory.objects.values_list('id', flat=True)]
+            document_category_ids = [str(doc_id) for doc_id in DocumentCategory.objects.all().values_list('id', flat=True)]
             document_category_ids = list(document_category_ids)
             
 
@@ -221,9 +221,9 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
 
         # Get consented document categories
         consented_categories = set(
-            consents.values_list('document_categories', flat=True)
+            [str(cat_id) for cat_id in consents.values_list('document_categories', flat=True)] # Make sure they're strings first
         )
-
+        
         # Build response dict
         result = {
             category_id: category_id in consented_categories
