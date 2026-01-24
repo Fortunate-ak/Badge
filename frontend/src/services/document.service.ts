@@ -33,13 +33,13 @@ export const documentService = {
    * Uploads a new document.
    * Note: Uses FormData for file upload.
    */
-  async upload(file: File, title:string, categories: string[], applicantId?: string): Promise<Document> {
+  async upload(file: File, title: string, categories: string[], applicantId?: string): Promise<Document> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
     categories.forEach(cat => formData.append('categories', cat));
     if (applicantId) {
-        formData.append('applicant', applicantId);
+      formData.append('applicant', applicantId);
     }
 
     const response = await customFetch(`${API_URL}/documents/`, {
@@ -67,5 +67,15 @@ export const documentService = {
     });
     if (!response.ok) throw await response.json();
     return response.json();
-  }
+  },
+
+  /**
+  * Deletes a document.
+  */
+  async delete(id: string): Promise<void> {
+    const response = await customFetch(`${API_URL}/documents/${id}/`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw await response.json();
+  },
 };

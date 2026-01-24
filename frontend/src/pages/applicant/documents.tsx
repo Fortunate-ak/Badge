@@ -44,7 +44,7 @@ export default function Documents() {
 
         {
             docs.map((doc) => (
-                <DocumentCard key={doc.id} title={doc.title} type={doc.type} timestamp={doc.updated_at} />
+                <DocumentCard value={doc} key={doc.id} id={doc.id} title={doc.title} type={doc.type} timestamp={doc.updated_at} />
             ))
         }
         <button onClick={() => modalRef.current?.open()} className="flex flex-row col-start-1 items-center gap-2 cursor-pointer border border-foreground/50 border-dashed bg-primary/10 rounded-md p-4">

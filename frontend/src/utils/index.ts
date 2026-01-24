@@ -44,7 +44,15 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
   return fetch(url, options);
 }
 
-
+const intervals: { label: string; seconds: number }[] = [
+  { label: "year", seconds: 365 * 24 * 60 * 60 },
+  { label: "month", seconds: 30 * 24 * 60 * 60 },
+  { label: "week", seconds: 7 * 24 * 60 * 60 },
+  { label: "day", seconds: 24 * 60 * 60 },
+  { label: "hour", seconds: 60 * 60 },
+  { label: "minute", seconds: 60 },
+  { label: "second", seconds: 1 },
+];
 
 export function timeAgo(input: Date | string | number): string {
   const now = new Date();
@@ -55,16 +63,6 @@ export function timeAgo(input: Date | string | number): string {
   if (isNaN(seconds)) {
     throw new Error("Invalid date passed to timeAgo()");
   }
-
-  const intervals: { label: string; seconds: number }[] = [
-    { label: "year", seconds: 365 * 24 * 60 * 60 },
-    { label: "month", seconds: 30 * 24 * 60 * 60 },
-    { label: "week", seconds: 7 * 24 * 60 * 60 },
-    { label: "day", seconds: 24 * 60 * 60 },
-    { label: "hour", seconds: 60 * 60 },
-    { label: "minute", seconds: 60 },
-    { label: "second", seconds: 1 },
-  ];
 
   for (const interval of intervals) {
     const count = Math.floor(seconds / interval.seconds);
@@ -88,16 +86,6 @@ export function timeLeft(input: Date | string | number): string {
     throw new Error("Invalid date passed to timeAgo()");
   }
 
-  const intervals: { label: string; seconds: number }[] = [
-    { label: "year", seconds: 365 * 24 * 60 * 60 },
-    { label: "month", seconds: 30 * 24 * 60 * 60 },
-    { label: "week", seconds: 7 * 24 * 60 * 60 },
-    { label: "day", seconds: 24 * 60 * 60 },
-    { label: "hour", seconds: 60 * 60 },
-    { label: "minute", seconds: 60 },
-    { label: "second", seconds: 1 },
-  ];
-
   for (const interval of intervals) {
     const count = Math.floor(seconds / interval.seconds);
     if (count >= 1) {
@@ -106,4 +94,21 @@ export function timeLeft(input: Date | string | number): string {
   }
 
   return "just now";
+}
+
+
+
+/// A function to generate a unique string ID, probably with a customizeable length
+export function generateUuid(): string {
+  // Check if the browser supports the Web Crypto API's randomUUID method
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  } else {
+    // Fallback for very old browsers (though not cryptographically secure)
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
 }
