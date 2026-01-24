@@ -57,7 +57,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ['id', 'applicant', 'opportunity', 'status', 'created_at']
+        fields = ['id', 'applicant', 'opportunity', 'status', 'letter', 'created_at']
         read_only_fields = ['id', 'applicant', 'opportunity', 'created_at']
 
 class ApplicationDetailSerializer(ApplicationSerializer):
@@ -95,7 +95,7 @@ class ApplicationCreateSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Application
-        fields = ['opportunity']
+        fields = ['opportunity', 'letter']
 
 
 class ApplicationStatusUpdateSerializer(serializers.ModelSerializer):

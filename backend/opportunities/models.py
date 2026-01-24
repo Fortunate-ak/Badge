@@ -42,6 +42,7 @@ class Application(models.Model):
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='applications')
     opportunity = models.ForeignKey(Opportunity, on_delete=models.CASCADE, related_name='applications')
     status = models.CharField(max_length=100, default='Submitted')
+    letter = models.TextField(blank=True, null=True, help_text="A motivational letter or additional info from the applicant.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

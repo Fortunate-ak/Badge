@@ -8,6 +8,8 @@ import ConsentRequestModal from "./consent-request-modal";
 import { useToast } from "../../../context/ToastContext";
 import DocumentMiniCard from "../../../ui/document-mini-card";
 import { timeAgo } from "../../../utils";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function ApplicationDetails() {
     const { id } = useParams<{ id: string }>();
@@ -68,7 +70,17 @@ export default function ApplicationDetails() {
                     <p className="text-muted">{timeAgo(application.created_at)}</p>
                     <button className="tw-button">Accept</button>
                 </div>
-                <h2 className="text-xl font-bold">Documents</h2>
+
+                {application.letter && (
+                    <div className="mt-4 mb-2">
+                        <h2 className="text-xl font-bold mb-2">Motivational Letter</h2>
+                        <div className="prose prose-sm dark:prose-invert max-w-none p-4 border border-border rounded-md bg-secondary/20">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{application.letter}</ReactMarkdown>
+                        </div>
+                    </div>
+                )}
+
+                <h2 className="text-xl font-bold mt-4">Documents</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                     {
                         application.documents.map((val, k) => {

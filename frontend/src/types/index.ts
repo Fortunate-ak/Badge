@@ -156,6 +156,7 @@ export interface Application {
   applicant: Applicant;
   opportunity: OpportunityForApplication;
   status: string;
+  letter?: string;
   created_at: string;
   updated_at: string;
 }

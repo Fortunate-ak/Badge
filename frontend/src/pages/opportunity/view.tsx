@@ -11,6 +11,8 @@ import { documentService } from "../../services/document.service";
 import { useToast } from "../../context/ToastContext";
 import MinimalModal, { type ModalHandle } from "../../ui/layouts/modal";
 import { consentService } from "../../services/consent.service";
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 
 
 
@@ -121,6 +123,7 @@ export default function OpportunityViewPage() {
  */
 function ActionButton({ opportunityId }: { opportunityId: string }) {
     const [hasApplied, setHasApplied] = React.useState<boolean | null>(null);
+    const [letter, setLetter] = useState("");
     const modalRef = useRef<ModalHandle | null>(null);
     const { user } = useAuth();
     const toast = useToast();
@@ -146,9 +149,10 @@ function ActionButton({ opportunityId }: { opportunityId: string }) {
                 })
             }
         });
-        applicationService.apply(opportunityId || "").then(() => {
+        applicationService.apply(opportunityId || "", letter).then(() => {
             toast.success("Successfully applied...");
             setHasApplied(true);
+            modalRef.current?.close();
         }).catch(console.error);
     }
 
@@ -156,9 +160,29 @@ function ActionButton({ opportunityId }: { opportunityId: string }) {
         return <span>Loading...</span>;
     }
 
-    if (!hasApplied) {
-        return <button onClick={() => applyNow()} className="tw-button cursor-pointer">Apply Now</button>
-    } else {
-        return <button className="tw-button cursor-pointer">See Application Status</button>
-    }
+    return (
+        <>
+            {!hasApplied ? (
+                <button onClick={() => modalRef.current?.open()} className="tw-button cursor-pointer">
+                    Apply Now
+                </button>
+            ) : (
+                <button className="tw-button cursor-pointer">See Application Status</button>
+            )}
+
+            <MinimalModal ref={modalRef} title="Apply to Opportunity">
+                <div className="flex flex-col gap-4">
+                    <p className="text-muted text-sm">
+                        Please write a motivational letter to the institution. This will help them understand why you are a good fit for this opportunity.
+                    </p>
+                    <SimpleMDE value={letter} onChange={setLetter} />
+                    <div className="flex justify-end">
+                         <button onClick={() => applyNow()} className="tw-button cursor-pointer">
+                            Submit Application
+                        </button>
+                    </div>
+                </div>
+            </MinimalModal>
+        </>
+    );
 }

@@ -44,13 +44,13 @@ export const applicationService = {
   /**
    * Applies to an opportunity.
    */
-  async apply(opportunityId: string): Promise<Application> {
+  async apply(opportunityId: string, letter?: string): Promise<Application> {
     const response = await customFetch(`${API_URL}/applications/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ opportunity: opportunityId }),
+      body: JSON.stringify({ opportunity: opportunityId, letter }),
     });
     if (!response.ok) throw await response.json();
     return response.json();
