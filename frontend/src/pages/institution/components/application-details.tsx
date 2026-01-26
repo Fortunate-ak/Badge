@@ -58,7 +58,7 @@ export default function ApplicationDetails() {
                         {application.applicant.email}
                     </li>
                     <li>
-                        <span className="mso text-xl text-muted">mail</span>
+                        <span className="mso text-xl text-muted">event</span>
                         {application.applicant.dob}
                     </li>
                 </ul>
