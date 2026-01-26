@@ -140,6 +140,7 @@ export interface Applicant {
   social_links:string;
   dob:string;
   interests:string;
+  bio:string;
 }
 
 export interface OpportunityForApplication {

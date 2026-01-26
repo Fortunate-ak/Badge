@@ -49,7 +49,7 @@ export default function ApplicationDetails() {
                     {application.applicant.last_name}
                 </h1>
                 <p className="text-sm text-gray-500">
-                    Applied for: {application.opportunity.title}
+                    {application.applicant.bio}
                 </p>
 
                 <ul className="flex flex-col gap-1 *:flex *:flex-row *:gap-1 *:items-center *:text-sm">
@@ -74,7 +74,7 @@ export default function ApplicationDetails() {
                 {application.letter && (
                     <div className="mt-4 mb-2">
                         <h2 className="text-xl font-bold mb-2">Motivational Letter</h2>
-                        <div className="prose prose-sm dark:prose-invert max-w-none p-4 border border-border rounded-md bg-secondary/20">
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{application.letter}</ReactMarkdown>
                         </div>
                     </div>

@@ -38,7 +38,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'profile_image', 'social_links', 'dob', 'interests']
+        fields = ['id', 'email', 'first_name', 'last_name', 'profile_image', 'social_links', 'dob', 'interests', 'bio']
 
 class OpportunityForApplicationSerializer(serializers.ModelSerializer):
     """
