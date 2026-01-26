@@ -80,14 +80,36 @@ export default function ApplicationDetails() {
                     </div>
                 )}
 
+                <hr />
+
                 <h2 className="text-xl font-bold mt-4">Documents</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
                     {
                         application.documents.map((val, k) => {
                             return <DocumentMiniCard key={k + "-docuemnt-mini-card"} value={val} />
                         })
                     }
                 </div>
+
+                <hr />
+                <h2 className="text-xl font-bold mt-4">Match Analytics</h2>
+                <div className="flex flex-col gap-2 *:text-sm">
+                    <p>
+                        <span className="font-thin text-xl">{application.match_record.match_percentage}% </span>
+                         Match
+                    </p>
+                    <p>
+                        <span className="font-bold text-base">Winning Argument</span><br />
+                        {application.match_record.winning_argument}
+                    </p>
+                    <p>
+                        <span className="font-bold text-base">Losing Argument</span><br />
+                        {application.match_record.losing_argument}
+                    </p>
+
+                    
+                </div>
+
 
                 <button
                     className="tw-button mt-4"

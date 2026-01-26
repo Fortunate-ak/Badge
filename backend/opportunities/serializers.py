@@ -8,6 +8,25 @@ from documents.models import ConsentLog
 
 User = get_user_model()
 
+class MatchRecordSerializer(serializers.ModelSerializer):
+    """
+    Serializer for MatchRecord model.
+    """
+    class Meta:
+        model = MatchRecord
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'match_percentage', 'winning_argument', 'losing_argument', 'matched_tags']
+
+
+class MatchRecordDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for MatchRecord model, that is meant for the application. 
+    """
+    class Meta:
+        model = MatchRecord
+        fields = ['id', 'created_at', 'match_percentage', 'winning_argument', 'losing_argument', 'matched_tags']
+
+
 class OpportunitySerializer(serializers.ModelSerializer):
     """
     Serializer for Opportunity model.
@@ -66,9 +85,17 @@ class ApplicationDetailSerializer(ApplicationSerializer):
     """
     opportunity = OpportunitySerializer(read_only=True)
     documents = serializers.SerializerMethodField()
-
+    match_record = serializers.SerializerMethodField()
+    
     class Meta(ApplicationSerializer.Meta):
-        fields = ApplicationSerializer.Meta.fields + ['updated_at', 'documents']
+        fields = ApplicationSerializer.Meta.fields + ['updated_at', 'documents', 'match_record']
+        
+    
+    def get_match_record(self, obj):
+        applicant = obj.applicant
+        opportunity = obj.opportunity
+                
+        return MatchRecordDetailSerializer(MatchRecord.objects.filter(applicant=applicant, opportunity=opportunity).first()).data
     
     def get_documents(self, obj):
         """
@@ -105,12 +132,3 @@ class ApplicationStatusUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = ['status']
-
-class MatchRecordSerializer(serializers.ModelSerializer):
-    """
-    Serializer for MatchRecord model.
-    """
-    class Meta:
-        model = MatchRecord
-        fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'match_percentage', 'winning_argument', 'losing_argument', 'matched_tags']
