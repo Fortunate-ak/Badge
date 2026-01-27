@@ -101,15 +101,15 @@ export default function OpportunityDetails() {
                     <span className="text-3xl font-bold">{analytics.total}</span>
                     <span className="text-sm text-gray-500">Total Applications</span>
                 </div>
-                <div className="tw-card flex flex-col items-center justify-center p-4 bg-green-50 border-green-200">
+                <div className="tw-card flex flex-col items-center justify-center p-4">
                     <span className="text-3xl font-bold text-green-700">{analytics.accepted}</span>
                     <span className="text-sm text-green-600">Accepted</span>
                 </div>
-                <div className="tw-card flex flex-col items-center justify-center p-4 bg-red-50 border-red-200">
+                <div className="tw-card flex flex-col items-center justify-center p-4">
                     <span className="text-3xl font-bold text-red-700">{analytics.rejected}</span>
                     <span className="text-sm text-red-600">Rejected</span>
                 </div>
-                <div className="tw-card flex flex-col items-center justify-center p-4 bg-blue-50 border-blue-200">
+                <div className="tw-card flex flex-col items-center justify-center p-4">
                     <span className="text-3xl font-bold text-blue-700">{analytics.pending}</span>
                     <span className="text-sm text-blue-600">Pending / In Review</span>
                 </div>
