@@ -1,6 +1,6 @@
 import { customFetch } from '../utils';
 import { unwrapList } from './common';
-import type { Institution, InstitutionStaff } from '../types';
+import type { Institution, InstitutionStaff, User } from '../types';
 
 const API_URL = '/api';
 
@@ -127,5 +127,31 @@ export const institutionService = {
       if (!response.ok) throw await response.json();
       const data = await response.json();
       return unwrapList<InstitutionStaff>(data);
+    },
+
+  /**
+   * Verifies if a user exists by email.
+   */
+  async verifyUser(email: string): Promise<User> {
+    const response = await customFetch(`${API_URL}/users/search/?email=${encodeURIComponent(email)}`, {
+      method: 'GET',
+    });
+    if (!response.ok) throw await response.json();
+    return response.json();
+  },
+
+  /**
+   * Removes a staff member.
+   */
+  async removeStaff(staffId: string): Promise<void> {
+    const response = await customFetch(`${API_URL}/institution-staff/${staffId}/`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+        // Handle 204 No Content which might be returned by DELETE, but customFetch handles it?
+        // Usually DELETE returns 204 without body.
+        // If response.ok is false, it's an error.
+        throw await response.json();
     }
+  }
 };

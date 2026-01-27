@@ -58,6 +58,22 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'status': 'Password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['get'], url_path='search')
+    def search_by_email(self, request):
+        """
+        Search for a user by email.
+        """
+        email = request.query_params.get('email')
+        if not email:
+            return Response({'error': 'Email parameter is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 class InstitutionViewSet(viewsets.ModelViewSet):
     """
     API endpoint for institutions.
@@ -114,6 +130,15 @@ class InstitutionStaffViewSet(viewsets.ModelViewSet):
             return InstitutionStaff.objects.all()
         my_institutions = InstitutionStaff.objects.filter(user=user).values_list('institution', flat=True)
         return InstitutionStaff.objects.filter(institution__in=my_institutions)
+
+    def perform_destroy(self, instance):
+        """
+        Only allow admins of the institution to remove staff.
+        """
+        if not InstitutionStaff.objects.filter(institution=instance.institution, user=self.request.user, is_admin=True).exists():
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("You do not have permission to remove staff from this institution.")
+        instance.delete()
 
 class DocumentCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
