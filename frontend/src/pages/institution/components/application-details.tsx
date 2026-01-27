@@ -7,7 +7,7 @@ import Modal, { type ModalHandle } from "../../../ui/layouts/modal";
 import ConsentRequestModal from "./consent-request-modal";
 import { useToast } from "../../../context/ToastContext";
 import DocumentMiniCard from "../../../ui/document-mini-card";
-import { timeAgo } from "../../../utils";
+import { timeAgo, APPLICATION_STATUSES } from "../../../utils";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -22,6 +22,18 @@ export default function ApplicationDetails() {
             applicationService.getById(id).then(setApplication);
         }
     }, [id]);
+
+    const handleStatusChange = async (newStatus: string) => {
+        if (application && id) {
+            try {
+                const updated = await applicationService.updateStatus(id, newStatus);
+                setApplication(prev => prev ? { ...prev, status: updated.status } : null);
+                toast.success("Status updated successfully.");
+            } catch (error) {
+                toast.error("Failed to update status.");
+            }
+        }
+    };
 
     const handleConsentRequest = (categoryIds: string[]) => {
         if (application) {
@@ -68,7 +80,16 @@ export default function ApplicationDetails() {
             <div className="rounded-xl border border-border p-4 flex flex-col w-full">
                 <div className="flex flex-row justify-between items-center">
                     <p className="text-muted">{timeAgo(application.created_at)}</p>
-                    <button className="tw-button">Accept</button>
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-700">Status:</label>
+                        <select
+                            value={application.status}
+                            onChange={(e) => handleStatusChange(e.target.value)}
+                            className="tw-select py-1 pr-8 pl-3 text-sm min-w-[140px]"
+                        >
+                            {APPLICATION_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                    </div>
                 </div>
 
                 {application.letter && (

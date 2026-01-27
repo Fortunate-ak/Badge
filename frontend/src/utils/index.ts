@@ -112,3 +112,12 @@ export function generateUuid(): string {
     });
   }
 }
+
+export const APPLICATION_STATUSES = [
+  'Submitted',
+  'Accepted',
+  'Rejected',
+  'In Review',
+  'Pending Verification',
+  'Waitlisted'
+];
