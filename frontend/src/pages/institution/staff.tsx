@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router";
 import { institutionService } from "../../services/institution.service";
 import type { InstitutionStaff, User } from "../../types";
-import MinimalModal, { ModalHandle } from "../../ui/layouts/modal";
+import MinimalModal, { type ModalHandle } from "../../ui/layouts/modal";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Staff() {
@@ -101,7 +101,7 @@ export default function Staff() {
                 <h1 className="tw-h1">Staff Members</h1>
                 {isCurrentUserAdmin && (
                     <button
-                        className="tw-button-primary"
+                        className="tw-button"
                         onClick={() => modalRef.current?.open()}
                     >
                         Add Staff
@@ -170,9 +170,9 @@ export default function Staff() {
                     </div>
 
                     {foundUser && (
-                        <div className="flex items-center gap-3 p-3 border border-green-200 bg-green-50 rounded-md">
+                        <div className="flex items-center gap-3 p-3 border border-green-200 rounded-md">
                              {foundUser.profile_image ? (
-                                <img src={foundUser.profile_image} className="w-10 h-10 rounded-full object-cover" alt="" />
+                                <img src={foundUser.profile_image.replace("localhost", window.location.host)} className="w-10 h-10 rounded-full object-cover" alt="" />
                              ) : (
                                 <div className="w-10 h-10 rounded-full bg-green-200 flex items-center justify-center text-green-800 font-bold uppercase">
                                     {foundUser.first_name?.[0]}
