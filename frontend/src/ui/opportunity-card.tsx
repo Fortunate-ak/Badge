@@ -8,8 +8,8 @@ export default function OpportunityCard({ id, title, description, tags, company,
         <div className="flex flex-row items-center">
             {logo && <img src={logo} className="size-8 rounded-full mr-2 bg-primary/10 p-1" />}
             <div className="flex flex-col *:m-0">
-                <span className="text-sm text-muted font-bold">{company}</span>
-                <span className="text-[0.7rem] text-muted">{timeLeft(expiry_date || "")}</span>
+                <span className="text-sm font-bold mb-0">{company}</span>
+                <span className="text-[0.7rem] text-muted mb-0">{timeLeft(expiry_date || "")}</span>
             </div>
         </div>
         <h2 className="text-xl font-bold">{title}</h2>
