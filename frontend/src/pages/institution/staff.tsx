@@ -28,7 +28,7 @@ export default function Staff() {
                             
                         </div>
                         <Link
-                            to={`/institution/application/${member.id}`}
+                            to={`/institution`}
                             className="tw-button-ghost text-xs"
                         >
                             View Details
