@@ -38,10 +38,20 @@ class Application(models.Model):
     """
     Tracks an applicant's application to an opportunity.
     """
+    
+    STATUS_TYPES = [
+        ('Submitted', 'Submitted'),
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
+        ('In Review', 'In Review'),
+        ('Pending Verification', 'Pending Verification'),
+        ('Waitlisted', 'Waitlisted')
+    ]
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='applications')
     opportunity = models.ForeignKey(Opportunity, on_delete=models.CASCADE, related_name='applications')
-    status = models.CharField(max_length=100, default='Submitted')
+    status = models.CharField(max_length=100, default='Submitted', choices=STATUS_TYPES)
     letter = models.TextField(blank=True, null=True, help_text="A motivational letter or additional info from the applicant.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
