@@ -101,6 +101,6 @@ The database schema has been designed for flexibility and scalability.
 ## **5\. Security & Deployment Notes**
 
 *   **Document Access:** Document retrieval APIs must first check the `ConsentLog` table for an active, unrevoked consent grant.
-*   **Data Integrity:** The `file_hash` in the `Document` model is mandatory to ensure file integrity.
+*   **Data Integrity:** The `file_hash` in the `Document` model is mandatory to ensure file integrity. But honestly i don't know how that helps exactly. 
 
 **Action Items for Development:** Prioritize implementing the API endpoints for the `Institution` and `User` profile management and the `MatchRecord` generation pipeline.
