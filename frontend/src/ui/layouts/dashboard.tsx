@@ -64,7 +64,7 @@ function Navigations() {
     else if (user && user.is_institution_staff && location.pathname.includes("institution")) return <>
         <NavItem title="Home (Opportunities)" icon="home" path="/institution" />
         <NavItem title="Applicants" icon="group" path='/institution/staff' />
-        <NavItem title="Consent" icon="order_approve" path='/institution/consent' />
+        <NavItem title="Verifications" icon="order_approve" path='/institution/documents' />
         <NavItem title="Profile" icon="person" path={`/institution/${user?.institution_details?.[0]?.id || ""}`} />
     </>
 
