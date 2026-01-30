@@ -87,6 +87,8 @@ export interface Verification {
   id: string;
   document: string; // Document ID
   institution: string; // Institution ID
+  institution_details?: Institution;
+  document_details?: Document & { applicant_details?: User };
   is_verified: boolean;
   rejection_reason?: string;
   verified_by?: string; // User ID

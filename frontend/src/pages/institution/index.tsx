@@ -1,7 +1,7 @@
 import { Route } from "react-router";
 import Opportunities from "./opportunities";
 import Staff from "./staff";
-import Consent from "./consent";
+import InstitutionDocuments from "./documents";
 import OpportunityDetails from "./components/opportunity-details";
 import ApplicationDetails from "./components/application-details";
 import CreateInstitutionPage from "./create";
@@ -15,7 +15,7 @@ export default function InstitutionRoutes() {
         <Route path="create" element={<CreateInstitutionPage />} />
         <Route path=":id" element={<UpdateInstitutionPage />} />
         <Route path="staff" element={<Staff />} />
-        <Route path="consent" element={<Consent />} />
+        <Route path="documents" element={<InstitutionDocuments />} />
         <Route path="opportunity/:id" element={<OpportunityDetails />} />
         <Route path="opportunity/create" element={<CreateOpportunity />} />
         <Route path="application/:id" element={<ApplicationDetails />} />

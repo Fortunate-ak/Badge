@@ -157,14 +157,40 @@ class DocumentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Document.objects.filter(applicant=self.request.user)
+        return Document.objects.filter(Q(applicant=self.request.user) | Q(uploaded_by=self.request.user))
 
     def perform_create(self, serializer):
         applicant = serializer.validated_data.get('applicant')
+        document = None
+        
         if not applicant:
-            serializer.save(applicant=self.request.user, uploaded_by=self.request.user)
+            document = serializer.save(applicant=self.request.user, uploaded_by=self.request.user)
         else:
-            serializer.save(uploaded_by=self.request.user)
+            document = serializer.save(uploaded_by=self.request.user)
+
+        # Automatic Verification Logic
+        if self.request.user.is_institution_staff and applicant and applicant != self.request.user:
+            # Try to determine institution
+            institution_id = self.request.data.get('institution_id')
+            institution = None
+            
+            if institution_id:
+                # Validate user belongs to this institution
+                if InstitutionStaff.objects.filter(institution_id=institution_id, user=self.request.user).exists():
+                     institution = Institution.objects.get(id=institution_id)
+            else:
+                # Infer institution (pick the first one they are admin/staff of)
+                staff_record = InstitutionStaff.objects.filter(user=self.request.user).first()
+                if staff_record:
+                    institution = staff_record.institution
+            
+            if institution:
+                Verification.objects.create(
+                    document=document,
+                    institution=institution,
+                    is_verified=True,
+                    verified_by=self.request.user
+                )
 
     @action(detail=True, methods=['post'], url_path='verify')
     def verify(self, request, pk=None):
@@ -189,6 +215,67 @@ class VerificationViewSet(viewsets.ModelViewSet):
     queryset = Verification.objects.all()
     serializer_class = VerificationSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Verification.objects.all()
+        
+        if user.is_institution_staff:
+            my_institutions = InstitutionStaff.objects.filter(user=user).values_list('institution', flat=True)
+            # Allow access if they are institution staff OR if they are the applicant
+            queryset = queryset.filter(Q(institution__in=my_institutions) | Q(document__applicant=user))
+        elif user.is_applicant:
+            queryset = queryset.filter(document__applicant=user)
+        else:
+            queryset = queryset.none()
+            
+        # Filtering
+        applicant_email = self.request.query_params.get('applicant_email')
+        if applicant_email:
+            queryset = queryset.filter(document__applicant__email__icontains=applicant_email)
+            
+        applicant_name = self.request.query_params.get('applicant_name')
+        if applicant_name:
+             queryset = queryset.filter(
+                Q(document__applicant__first_name__icontains=applicant_name) | 
+                Q(document__applicant__last_name__icontains=applicant_name)
+            )
+
+        institution_id = self.request.query_params.get('institution_id')
+        if institution_id:
+            queryset = queryset.filter(institution_id=institution_id)
+
+        document_id = self.request.query_params.get('document_id')
+        if document_id:
+            queryset = queryset.filter(document_id=document_id)
+            
+        return queryset.distinct().order_by('-created_at')
+
+    def perform_create(self, serializer):
+        institution = serializer.validated_data.get('institution')
+        
+        # If applicant is creating, it's a request: is_verified=False
+        if self.request.user.is_applicant and not self.request.user.is_institution_staff:
+             # Ensure they are requesting for their own document
+             document = serializer.validated_data.get('document')
+             if document.applicant != self.request.user:
+                 raise serializers.ValidationError("You can only request verification for your own documents.")
+             
+             serializer.save(is_verified=False, verified_by=None)
+        
+        # If institution staff is creating
+        elif self.request.user.is_institution_staff:
+             # Check if they are staff of the institution
+             if not InstitutionStaff.objects.filter(institution=institution, user=self.request.user).exists():
+                 raise serializers.ValidationError("You are not staff of this institution.")
+             
+             is_verified = serializer.validated_data.get('is_verified', False)
+             if is_verified:
+                 serializer.save(verified_by=self.request.user)
+             else:
+                 serializer.save()
+        else:
+            serializer.save(is_verified=False)
 
 class ConsentLogViewSet(viewsets.ModelViewSet):
     queryset = ConsentLog.objects.all()

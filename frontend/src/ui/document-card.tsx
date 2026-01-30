@@ -4,11 +4,12 @@ import type { Document } from "../types";
 import { documentService } from "../services/document.service";
 
 
-export default function DocumentCard({ value }: { value: Document }) {
+export default function DocumentCard({ value, onClick }: { value: Document, onClick?: () => void }) {
     const toast = useToast();
     const deleted = useRef(false);
 
-    const deleteFunc = () => {
+    const deleteFunc = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
         toast.confirm("Are you sure you want to delete " + value.title, { cancelText: "No", confirmText: "Yes" }).then(val => {
             if (val) {
                 const toastId = toast.loading('Working on it...', {
@@ -40,10 +41,10 @@ export default function DocumentCard({ value }: { value: Document }) {
     if (deleted.current) {
         return <></>
     }
-    return <div className="flex flex-col p-4 border border-border rounded-md bg-secondary group transition-all cursor-pointer">
+    return <div onClick={onClick} className="flex flex-col p-4 border border-border rounded-md bg-secondary group transition-all cursor-pointer">
         <div className="flex flex-row justify-between items-center w-full">
             <span className="mso filled text-6xl font-bold text-muted">picture_as_pdf</span>
-            <button onClick={() => deleteFunc()} popoverTarget={"menu-items-" + value.id} className="mso text-xl place-self-start cursor-pointer" style={{ 'anchorName': '--menu-anchor-' + value.id } as any}>delete</button>
+            <button onClick={(e) => deleteFunc(e)} popoverTarget={"menu-items-" + value.id} className="mso text-xl place-self-start cursor-pointer hover:text-red-500" style={{ 'anchorName': '--menu-anchor-' + value.id } as any}>delete</button>
             {/*<div popover="auto" id={"menu-items-"+id} className="fixed *:text-sm top-[anchor(bottom)] left-[anchor(left)] bg-secondary border border-border p-2 rounded-md shadow-lg" style={{'positionAnchor' : '--menu-anchor-'+id} as any}>
                 <button onClick={() => console.log("Cliked yey!")}>Delete Now</button>
                 <button></button>
