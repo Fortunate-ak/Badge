@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "institutions",
     "documents",
     "opportunities",
+    "integrations",
 ]
 
 REST_FRAMEWORK = {

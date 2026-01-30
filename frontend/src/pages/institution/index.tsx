@@ -7,6 +7,7 @@ import ApplicationDetails from "./components/application-details";
 import CreateInstitutionPage from "./create";
 import UpdateInstitutionPage from "./update";
 import CreateOpportunity from "./create-opportunity";
+import DeveloperPage from "./developer";
 
 
 export default function InstitutionRoutes() {
@@ -19,5 +20,6 @@ export default function InstitutionRoutes() {
         <Route path="opportunity/:id" element={<OpportunityDetails />} />
         <Route path="opportunity/create" element={<CreateOpportunity />} />
         <Route path="application/:id" element={<ApplicationDetails />} />
+        <Route path="developer" element={<DeveloperPage />} />
     </Route>
 }

@@ -185,3 +185,13 @@ export interface MatchRecord {
   matched_tags: string[];
   created_at: string;
 }
+
+export interface APIKey {
+  id: string;
+  key: string;
+  label: string;
+  created_at: string;
+  last_used_at?: string;
+  is_active: boolean;
+  request_count: number;
+}
