@@ -145,7 +145,7 @@ export default function InstitutionDocuments() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="tw-h1">Document Verifications</h1>
-                <button onClick={() => uploadModalRef.current?.open()} className="tw-button-primary">Upload for Applicant</button>
+                <button onClick={() => uploadModalRef.current?.open()} className="tw-button">Upload for Applicant</button>
             </div>
             
             <div className="mb-4">
