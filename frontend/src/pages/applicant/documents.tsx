@@ -135,13 +135,13 @@ export default function Documents() {
                         <p className="text-sm text-muted">Hash: {selectedDoc.file_hash}</p>
                         <p className="text-sm text-muted">ID: {selectedDoc.id}</p>
                         {selectedDoc.file && typeof selectedDoc.file === 'string' && (
-                             <a href={selectedDoc.file} target="_blank" rel="noreferrer" className="text-primary underline mt-2 block">View Document</a>
+                             <a href={selectedDoc.file.replace("localhost", window.location.host)} target="_blank" rel="noreferrer" className="text-primary underline mt-2 block">View Document</a>
                         )}
                      </div>
 
                      <div className="flex justify-between items-center">
                         <h4 className="font-bold">Verifications</h4>
-                        <button onClick={openRequestVerification} className="tw-button-outline text-xs px-2 py-1">Request Verification</button>
+                        <button onClick={openRequestVerification} className="tw-button tw-button-sm text-xs px-2 py-1">Request Verification</button>
                      </div>
                      
                      {verifications.length === 0 ? (
