@@ -266,7 +266,7 @@ export default function InstitutionDocuments() {
                          <input required onChange={(e) => {setValues({ ...values, file: (e.target?.files || [])[0] || null })}} name="file" type="file" className="tw-input cursor-pointer" />
                     </div>
 
-                    <button type="submit" disabled={!verifiedApplicant} className="tw-button-primary cursor-pointer disabled:opacity-50">Upload & Verify</button>
+                    <button type="submit" disabled={!verifiedApplicant} className="tw-button cursor-pointer disabled:opacity-25">Upload & Verify</button>
                 </form>
             </MinimalModal>
         </div>

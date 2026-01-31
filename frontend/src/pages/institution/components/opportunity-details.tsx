@@ -62,9 +62,9 @@ export default function OpportunityDetails() {
             accessor: "status",
             cell: (val) => (
                 <span className={`tw-tag ${
-                    val === 'Accepted' ? 'bg-green-100 text-green-800' :
-                    val === 'Rejected' ? 'bg-red-100 text-red-800' :
-                    'bg-blue-100 text-blue-800'
+                    val === 'Accepted' ? 'bg-green-100/5 text-green-500' :
+                    val === 'Rejected' ? 'bg-red-100/5 text-red-500' :
+                    'bg-blue-100/5 text-blue-700'
                 }`}>
                     {val}
                 </span>
@@ -103,7 +103,7 @@ export default function OpportunityDetails() {
                 </div>
                 <div className="tw-card flex flex-col items-center justify-center p-4">
                     <span className="text-3xl font-bold text-green-700">{analytics.accepted}</span>
-                    <span className="text-sm text-green-600">Accepted</span>
+                    <span className="text-sm text-green-500">Accepted</span>
                 </div>
                 <div className="tw-card flex flex-col items-center justify-center p-4">
                     <span className="text-3xl font-bold text-red-700">{analytics.rejected}</span>

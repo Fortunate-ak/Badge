@@ -92,16 +92,18 @@ export default function ApplicationDetails() {
                     </div>
                 </div>
 
-                {application.letter && (
+                {application.letter && (<>
                     <div className="mt-4 mb-2">
                         <h2 className="text-xl font-bold mb-2">Motivational Letter</h2>
                         <div className="prose prose-sm dark:prose-invert max-w-none">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{application.letter}</ReactMarkdown>
                         </div>
                     </div>
+                    <hr />
+                    </>
                 )}
 
-                <hr />
+                
 
                 <h2 className="text-xl font-bold mt-4">Documents</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
