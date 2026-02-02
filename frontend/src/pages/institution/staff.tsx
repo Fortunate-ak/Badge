@@ -142,13 +142,6 @@ export default function Staff() {
                                     Remove
                                 </button>
                             )}
-                            
-                            <Link
-                                to={`/institution`}
-                                className="tw-button-ghost text-xs"
-                            >
-                                View Details
-                            </Link>
                         </div>
                     </div>
                 ))}
