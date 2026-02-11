@@ -14,7 +14,7 @@ class RecommendationEngine:
     """
     _instance = None
     _client = None
-    _model_name = "gemma"
+    _model_name = "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:latest"
 
     def __new__(cls):
         if cls._instance is None:
@@ -139,9 +139,11 @@ class RecommendationEngine:
 
             Provide a JSON output with the following keys:
             - match_percentage: a number between 0 and 100.
-            - winning_argument: A short paragraph explaining why they are a good fit.
-            - losing_argument: A short paragraph explaining gaps or why they might not fit.
+            - winning_argument: A paragraph explaining why they are a good fit.
+            - losing_argument: A paragraph explaining gaps or why they might not fit.
             - matched_tags: A list of strings (tags) from the opportunity that the applicant matches.
+            
+            Generate only the JSON output without any additional text or explanations.
             """
 
             response = self._client.chat(model=self._model_name, messages=[
