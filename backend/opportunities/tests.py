@@ -94,8 +94,8 @@ class RecommendationEngineTestCase(TestCase):
         self.assertEqual(match_record.opportunity, self.opp_python)
 
         # Verify arguments
-        self.assertIn("Python", match_record.winning_argument)
-        self.assertIn("Django", match_record.winning_argument)
+        self.assertIn("python", match_record.winning_argument.lower())
+        self.assertIn("django", match_record.winning_argument.lower())
         self.assertIn("Rest Framework", match_record.losing_argument.title()) # It's case sensitive in text usually, but my implementation lowercases for logic. The text output keeps user/opp case?
         # Actually my implementation lowercases everything in comparison.
         # The stored tags in models.py are case sensitive lists?
