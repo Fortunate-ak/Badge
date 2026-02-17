@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { Opportunity, Document } from "../../types";
-import { timeAgo } from "../../utils";
+import type { Opportunity, Document, ApplicationDetail } from "../../types";
+import { timeAgo, timeLeft } from "../../utils";
 import { useParams } from "react-router";
 import { opportunityService } from "../../services/opportunity.service";
 import React from "react";
@@ -73,9 +73,9 @@ export default function OpportunityViewPage() {
 
         <div className="rounded-xl border border-border p-4 flex flex-col w-full">
             <div className="flex flex-row justify-between items-center mb-1">
-                <span className="text-sm text-foreground/50">Posted {timeAgo(value?.updated_at || "12-12-12")}</span>
+                <span className="text-sm text-foreground/50">{timeLeft(value?.updated_at || "12-12-12")}</span>
                 {
-                    id ? <ActionButton opportunityId={id} /> : null
+                    id ? <ActionButton opp={value} opportunityId={id} /> : null
                 }
 
 
@@ -121,17 +121,15 @@ export default function OpportunityViewPage() {
  * If the user has editing rights, it returns an "edit" span.
  * @returns the correct action button
  */
-function ActionButton({ opportunityId }: { opportunityId: string }) {
-    const [hasApplied, setHasApplied] = React.useState<boolean | null>(null);
+function ActionButton({ opportunityId, opp }: { opportunityId: string, opp:Opportunity|null }) {
     const [letter, setLetter] = useState("");
+    const [currentApplication, setCurrentApplication] = useState<ApplicationDetail | null>(null);
     const modalRef = useRef<ModalHandle | null>(null);
     const { user } = useAuth();
     const toast = useToast();
 
     React.useEffect(() => {
-        opportunityService.hasApplied(opportunityId || "").then((hasAppliedValue) => {
-            setHasApplied(hasAppliedValue.has_applied);
-        }).catch(console.error);
+        applicationService.getByOpportunityId(opportunityId).then(setCurrentApplication).catch(console.error);
     }, [opportunityId]);
 
 
@@ -140,35 +138,55 @@ function ActionButton({ opportunityId }: { opportunityId: string }) {
         opportunityService.getById(opportunityId || "").then(async (opp_val) => {
             let categories_check = await consentService.check(opp_val.document_categories || [], opp_val.posted_by_institution, user?.id || "");
             let non_consented_categories = Object.entries(categories_check).filter(val => !val[1]).map(val => val[0]);
-            if (non_consented_categories.length != 0){
+            if (non_consented_categories.length != 0) {
                 consentService.create({
                     applicant: user?.id,
                     document_categories: non_consented_categories,
                     requester_institution: opp_val.institution_details?.id,
-                    is_granted:true // auto granted
+                    is_granted: true // auto granted
                 })
             }
         });
         applicationService.apply(opportunityId || "", letter).then(() => {
             toast.success("Successfully applied...");
-            setHasApplied(true);
             modalRef.current?.close();
+            window.location.href = "";
+            
         }).catch(console.error);
     }
 
-    if (hasApplied === null) {
+    if (opp?.has_applied === null) {
         return <span>Loading...</span>;
     }
 
     return (
         <>
-            {!hasApplied ? (
-                <button onClick={() => modalRef.current?.open()} className="tw-button cursor-pointer">
-                    Apply Now
-                </button>
-            ) : (
-                <button className="tw-button cursor-pointer">See Application Status</button>
-            )}
+            <div className="flex flex-row gap-2">
+                <span onClick={
+                    () => {
+                        window.navigator.share({
+                            title : opp?.title + " | Badge",
+                            url : window.location.href
+                        })
+                    }
+                } className="tw-button-ghost mso cursor-pointer">share</span>
+                {!opp?.has_applied ? (
+                    !(timeLeft(opp?.expiry_date || "12-12-12") == "Expired") ? 
+                    <button onClick={() => modalRef.current?.open()} className="tw-button cursor-pointer">
+                        Apply Now
+                    </button>
+                    : <span></span>
+
+                ) : (
+                    <span className={`tw-tag scale-105 rounded-md! py-2 px-3 ${currentApplication?.status === 'Accepted' ? 'bg-green-100/5 text-green-500' :
+                        currentApplication?.status === 'Rejected' ? 'bg-red-100/5 text-red-500' :
+                            'bg-blue-100/5 text-blue-700'
+                        }`}>
+                        {currentApplication?.status}
+                    </span>
+                )}
+            </div>
+
 
             <MinimalModal ref={modalRef} title="Apply to Opportunity">
                 <div className="flex flex-col gap-4">
@@ -177,7 +195,7 @@ function ActionButton({ opportunityId }: { opportunityId: string }) {
                     </p>
                     <SimpleMDE value={letter} onChange={setLetter} />
                     <div className="flex justify-end">
-                         <button onClick={() => applyNow()} className="tw-button cursor-pointer">
+                        <button onClick={() => applyNow()} className="tw-button cursor-pointer">
                             Submit Application
                         </button>
                     </div>
