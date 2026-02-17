@@ -141,7 +141,7 @@ export default function Documents() {
 
                      <div className="flex justify-between items-center">
                         <h4 className="font-bold">Verifications</h4>
-                        <button onClick={openRequestVerification} className="tw-button tw-button-sm text-xs px-2 py-1">Request Verification</button>
+                        <button onClick={openRequestVerification} className="tw-button tw-button-sm text-xs py-2 px-3">Request Verification</button>
                      </div>
                      
                      {verifications.length === 0 ? (
@@ -187,7 +187,7 @@ export default function Documents() {
                 <button 
                     onClick={handleRequestVerification} 
                     disabled={!selectedInstitution}
-                    className="tw-button-primary disabled:opacity-50"
+                    className="tw-button disabled:opacity-50"
                 >
                     Submit Request
                 </button>
