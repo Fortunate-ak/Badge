@@ -93,7 +93,7 @@ export function timeLeft(input: Date | string | number): string {
     }
   }
 
-  return "just now";
+  return "Expired";
 }
 
 

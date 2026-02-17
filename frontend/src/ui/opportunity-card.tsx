@@ -12,12 +12,12 @@ export default function OpportunityCard({ id, title, description, tags, company,
                 <span className="text-[0.7rem] text-muted mb-0">{timeLeft(expiry_date || "")}</span>
             </div>
         </div>
-        <h2 className="text-xl font-bold">{title}</h2>
+        <h2 className="text-xl font-bold md:line-clamp-1">{title}</h2>
         <p className="line-clamp-3 text-sm">
             {description}
         </p>
         <hr className="my-2 opacity-50" />
-        <div className="flex flex-row flex-wrap gap-2">
+        <div className="flex flex-row flex-wrap md:flex-nowrap gap-2 overflow-x-hidden">
         {
             tags.map(tag => <span key={tag} className="tw-tag">{tag}</span>)
         }
