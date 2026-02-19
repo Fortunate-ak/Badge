@@ -24,6 +24,9 @@ from opportunities.serializers import (
     ApplicationStatusUpdateSerializer, ApplicationDetailSerializer, ApplicationCreateSerializer
 )
 
+# Notification Service
+from core.notifications import send_push_notification
+
 # Define ViewSets for each model
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -456,7 +459,20 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
         serializer = ApplicationStatusUpdateSerializer(application, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            application = serializer.save()
+
+            # Send Push Notification
+            try:
+                opportunity_title = application.opportunity.title
+                new_status = application.status
+                send_push_notification(
+                    user=application.applicant,
+                    title="Application Status Updated",
+                    body=f"Your application for {opportunity_title} has been updated to: {new_status}"
+                )
+            except Exception as e:
+                print(f"Failed to send push notification: {e}")
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
