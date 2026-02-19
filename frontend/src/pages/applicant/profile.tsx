@@ -8,6 +8,8 @@ import MultiSelect from "../../ui/multi-select";
 import tags from "../../assets/tags.json"
 import { useToast } from "../../context/ToastContext";
 import { useNavigate } from "react-router";
+import { subscribeToPushNotifications } from "../../utils/push-notifications";
+import { pushService } from "../../services/push.service";
 
 
 export default function Profile() {
@@ -24,6 +26,7 @@ export default function Profile() {
     });
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [pushEnabled, setPushEnabled] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -40,6 +43,16 @@ export default function Profile() {
         }
     }, [user]);
 
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+             navigator.serviceWorker.ready.then(reg => {
+                 reg.pushManager.getSubscription().then(sub => {
+                     setPushEnabled(!!sub);
+                 });
+             });
+        }
+    }, []);
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -47,6 +60,27 @@ export default function Profile() {
             setImagePreview(URL.createObjectURL(file));
         }
     };
+
+    const togglePush = async () => {
+        if (pushEnabled) {
+             // For now, no unsubscribe logic implemented as per prompt requirements focus on subscribing
+             // But we can just show a message
+             toast.info("Push notifications are already enabled.");
+             return;
+        }
+
+        try {
+            const subscription = await subscribeToPushNotifications();
+            if (subscription) {
+                 await pushService.subscribe(subscription);
+                 setPushEnabled(true);
+                 toast.success("Push notifications enabled!");
+            }
+        } catch (e) {
+            console.error(e);
+            toast.error("Failed to enable push notifications.");
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -107,6 +141,14 @@ export default function Profile() {
                         <MultiSelect onChange={(v) => {setValues({...values, interests:v})}} value={values.interests} placeholder="Type here..." options={tags} />
                     </FormElement>
                 </div>
+
+                 <div className="flex justify-between items-center p-4 bg-secondary/30 rounded-md mt-4">
+                    <span className="font-semibold">Push Notifications</span>
+                    <button type="button" onClick={togglePush} className={"tw-button tw-button-sm " + (pushEnabled ? "bg-green-600 hover:bg-green-700" : "")}>
+                        {pushEnabled ? "Enabled" : "Enable"}
+                    </button>
+                </div>
+
                 <button type="submit" className="tw-button mt-4">Save Changes</button>
             </form>
         </div>

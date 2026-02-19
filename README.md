@@ -104,3 +104,15 @@ The database schema has been designed for flexibility and scalability.
 *   **Data Integrity:** The `file_hash` in the `Document` model is mandatory to ensure file integrity. But honestly i don't know how that helps exactly. 
 
 **Action Items for Development:** Prioritize implementing the API endpoints for the `Institution` and `User` profile management and the `MatchRecord` generation pipeline.
+
+## **6. New Features (Added in recent update)**
+
+### **6.1 Push Notifications**
+The system now supports Web Push Notifications for applicants.
+*   **Backend:** Uses `pywebpush` to handle subscription management.
+*   **Frontend:** A Service Worker (`sw.js`) handles incoming push events. Users can subscribe via their Profile page.
+
+### **6.2 Search & Discovery**
+Global search functionality is available for Applicants.
+*   **Scope:** Filters Documents and Opportunities lists in real-time.
+*   **UI:** Accessible via the top navigation bar.

@@ -2,6 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from accounts.views import PushSubscriptionViewSet
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
@@ -15,6 +16,7 @@ router.register(r'consent-logs', views.ConsentLogViewSet)
 router.register(r'opportunities', views.OpportunityViewSet)
 router.register(r'applications', views.ApplicationViewSet)
 router.register(r'match-records', views.MatchRecordViewSet)
+router.register(r'push-subscriptions', PushSubscriptionViewSet, basename='push-subscription')
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

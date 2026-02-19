@@ -4,7 +4,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
-from .serializers import UserSerializer, RegisterSerializer
+from .serializers import UserSerializer, RegisterSerializer, PushSubscriptionSerializer
+from rest_framework import viewsets, status
+from .models import PushSubscription
 
 User = get_user_model()
 
@@ -45,3 +47,18 @@ def api_login(request):
 def api_logout(request):
     logout(request)
     return Response({'status': 'Logged out'})
+
+class PushSubscriptionViewSet(viewsets.ModelViewSet):
+    serializer_class = PushSubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PushSubscription.objects.filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        # We need to pass request to context for the serializer
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from .models import PushSubscription
 
 User = get_user_model()
 
@@ -32,9 +33,14 @@ class UserSerializer(serializers.ModelSerializer):
         """
         Get all institutions where the user is a staff member or admin.
         """
-        from institutions.serializers import SimpleInstitutionSerializer
-        institutions = obj.institutions.all()
-        return SimpleInstitutionSerializer(institutions, many=True).data
+        # Circular import workaround? No, institutions depends on accounts usually.
+        # But UserSerializer might be used in institutions.
+        try:
+            from institutions.serializers import SimpleInstitutionSerializer
+            institutions = obj.institutions.all()
+            return SimpleInstitutionSerializer(institutions, many=True).data
+        except ImportError:
+            return []
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -83,3 +89,21 @@ class ChangePasswordSerializer(serializers.Serializer):
         if attrs['new_password'] != attrs['confirm_new_password']:
             raise serializers.ValidationError({"new_password": "New password fields didn't match."})
         return attrs
+
+
+class PushSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PushSubscription
+        fields = ['endpoint', 'p256dh', 'auth']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        subscription, created = PushSubscription.objects.update_or_create(
+            user=user,
+            endpoint=validated_data['endpoint'],
+            defaults={
+                'p256dh': validated_data['p256dh'],
+                'auth': validated_data['auth']
+            }
+        )
+        return subscription

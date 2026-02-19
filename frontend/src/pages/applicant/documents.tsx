@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import DocumentCard from "../../ui/document-card";
 import type { Document, DocumentCategory, Verification, Institution } from "../../types";
 import MinimalModal, {type ModalHandle } from "../../ui/layouts/modal";
@@ -8,10 +8,12 @@ import { verificationService } from "../../services/verification.service";
 import { institutionService } from "../../services/institution.service";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
+import { useSearch } from "../../context/SearchContext";
 
 export default function Documents() {
     const { user } = useAuth()
     const toast = useToast();
+    const { setSearchVisible, searchValue } = useSearch();
     const [docs, setDocs] = useState<Document[]>([]);
     const [categories, setCategories] = useState<DocumentCategory[]>([]);
     const modalRef = useRef<ModalHandle | null>(null);
@@ -82,6 +84,7 @@ export default function Documents() {
 
     // Fetch docs and categories on mount
     useEffect(() => {
+        setSearchVisible(true);
         documentService.getAll().then((fetchedDocs) => {
             setDocs(fetchedDocs);
         }).catch((err) => {
@@ -93,13 +96,23 @@ export default function Documents() {
         }).catch((err) => {
             console.error("Error fetching categories:", err);
         });
+
+        return () => setSearchVisible(false);
     }, []);
 
+    const filteredDocs = useMemo(() => {
+        if (!searchValue) return docs;
+        const lowerSearch = searchValue.toLowerCase();
+        return docs.filter(doc =>
+            doc.title.toLowerCase().includes(lowerSearch) ||
+            (doc.type && doc.type.toLowerCase().includes(lowerSearch))
+        );
+    }, [docs, searchValue]);
 
     return <div className="tw-dashboard-grid">
 
         {
-            docs.map((doc) => (
+            filteredDocs.map((doc) => (
                 <DocumentCard value={doc} key={doc.id} onClick={() => openDetails(doc)} />
             ))
         }
