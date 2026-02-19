@@ -39,8 +39,8 @@ class APIKeyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user
         if not user.is_institution_staff:
-             from rest_framework.exceptions import PermissionDenied
-             raise PermissionDenied("You are not institution staff.")
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("You are not institution staff.")
         
         # Determine institution. For now, pick the first one they are admin of.
         # Ideally, the frontend should pass institution_id if the user belongs to multiple.
