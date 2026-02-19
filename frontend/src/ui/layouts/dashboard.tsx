@@ -30,7 +30,10 @@ export default function Dashboard({ title = "Badge", className = "" }: { title?:
 
                 <div className='bg-background rounded-md flex flex-col transition-all flex-1 max-w-full'>
                     <header className='flex flex-row justify-between items-center p-2'>
-                        <span className='px-1 text-sm'>{title}</span>
+                        <span className='px-1 text-sm hidden md:block'>{title}</span>
+                        <div className='flex flex-row justify-center items-center mb-2 size-10 rounded-full bg-primary place-self-center md:hidden'>
+                            <h1 className='font-semibold text-xl line-clamp-1 mso filled text-white'>verified</h1>
+                        </div>
 
                         <SearchBar />
 
@@ -66,7 +69,7 @@ function SearchBar() {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Search..."
-                className="tw-input w-full pl-8 py-1 text-sm rounded-full bg-secondary/20 border-none focus:ring-1 focus:ring-primary"
+                className="tw-input w-full pl-8 py-1.5 text-sm rounded-full bg-secondary/20 border-border/50 focus:ring-1 focus:ring-primary"
             />
         </div>
     );
