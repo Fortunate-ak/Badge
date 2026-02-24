@@ -64,15 +64,12 @@ export default function HomePage() {
                             <Link to="/auth/register" className="tw-button h-11 px-6 text-base shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all w-full sm:w-auto">
                                 Get Started
                             </Link>
-                            <Link to="/docs" className="tw-button-secondary h-11 px-6 text-base hover:bg-secondary/80 transition-colors w-full sm:w-auto">
-                                Documentation
-                            </Link>
                         </div>
                     )}
 
                      {/* Split Selection Section (Simplified) */}
                     {!currentUser && (
-                        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
+                        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left hidden">
                             {/* Applicant Card */}
                             <Link to="/auth/register" className="group relative bg-card hover:bg-secondary/30 border border-border/50 rounded-2xl p-6 transition-all hover:shadow-lg hover:shadow-primary/5">
                                 <div className="relative z-10">
