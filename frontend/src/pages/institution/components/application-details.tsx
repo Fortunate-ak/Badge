@@ -55,7 +55,7 @@ export default function ApplicationDetails() {
     return (
         <div className="md:grid grid-cols-[1fr_3fr] flex flex-col-reverse gap-4 items-start">
             <div className="flex flex-col p-4 pt-0">
-                <img src={application.applicant.profile_image.replace("localhost", window.location.host)} alt="Profile Image" className="w-full p-2 border border-border rounded-full" />
+                <img src={application.applicant.profile_image.replace("localhost", window.location.host)} alt="Profile Image" className="md:size-64 object-cover w-full p-2 border border-border rounded-full" />
                 <h1 className="tw-h1 text-3xl font-bold">
                     {application.applicant.first_name}{" "}
                     {application.applicant.last_name}
