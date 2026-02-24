@@ -312,6 +312,7 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
     def check(self, request):
         """Check if a university has consent to view specific document categories."""
         document_category_ids = request.data.get('document_categories', [])
+        print("CHECKING CONSENT FOR CATEGORIES:", document_category_ids)
         institution_id = request.data.get('institution_id')
         applicant_id = request.data.get('applicant_id')
         
@@ -344,6 +345,7 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
             category_id: category_id in consented_categories
             for category_id in document_category_ids
         }
+        print("CONSENT CHECK RESULT:", result)
 
         return Response(result)
         

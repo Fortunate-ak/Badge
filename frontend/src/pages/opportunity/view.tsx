@@ -73,7 +73,7 @@ export default function OpportunityViewPage() {
 
         <div className="rounded-xl border border-border p-4 flex flex-col w-full">
             <div className="flex flex-row justify-between items-center mb-1">
-                <span className="text-sm text-foreground/50">{timeLeft(value?.updated_at || "12-12-12")}</span>
+                <span className="text-sm text-foreground/50">Posted {timeAgo(value?.updated_at || "12-12-12")}</span>
                 {
                     id ? <ActionButton opp={value} opportunityId={id} /> : null
                 }
@@ -121,7 +121,7 @@ export default function OpportunityViewPage() {
  * If the user has editing rights, it returns an "edit" span.
  * @returns the correct action button
  */
-function ActionButton({ opportunityId, opp }: { opportunityId: string, opp:Opportunity|null }) {
+function ActionButton({ opportunityId, opp }: { opportunityId: string, opp: Opportunity | null }) {
     const [letter, setLetter] = useState("");
     const [currentApplication, setCurrentApplication] = useState<ApplicationDetail | null>(null);
     const modalRef = useRef<ModalHandle | null>(null);
@@ -138,6 +138,7 @@ function ActionButton({ opportunityId, opp }: { opportunityId: string, opp:Oppor
         opportunityService.getById(opportunityId || "").then(async (opp_val) => {
             let categories_check = await consentService.check(opp_val.document_categories || [], opp_val.posted_by_institution, user?.id || "");
             let non_consented_categories = Object.entries(categories_check).filter(val => !val[1]).map(val => val[0]);
+            console.log(non_consented_categories, "--non_consented_categories");
             if (non_consented_categories.length != 0) {
                 consentService.create({
                     applicant: user?.id,
@@ -145,18 +146,36 @@ function ActionButton({ opportunityId, opp }: { opportunityId: string, opp:Oppor
                     requester_institution: opp_val.institution_details?.id,
                     is_granted: true // auto granted
                 })
+                toast.success("Consent granted for all required document categories.");
             }
         });
         applicationService.apply(opportunityId || "", letter).then(() => {
-            toast.success("Successfully applied...");
+            toast.success("Successfully applied to opportunity.");
             modalRef.current?.close();
             window.location.href = "";
-            
         }).catch(console.error);
     }
 
     if (opp?.has_applied === null) {
         return <span>Loading...</span>;
+    }
+
+    const juscheck = () => {
+        opportunityService.getById(opportunityId || "").then(async (opp_val) => {
+            let categories_check = await consentService.check(opp_val.document_categories || [], opp_val.posted_by_institution, user?.id || "");
+            let non_consented_categories = Object.entries(categories_check).filter(val => !val[1]).map(val => val[0]);
+            console.log(non_consented_categories, "--non_consented_categories");
+
+            consentService.create({
+                applicant: user?.id,
+                document_categories: non_consented_categories,
+                requester_institution: opp_val.institution_details?.id,
+                is_granted: true // auto granted
+            })
+            toast.success("Consent granted for all required document categories.");
+        });
+
+
     }
 
     return (
@@ -165,20 +184,20 @@ function ActionButton({ opportunityId, opp }: { opportunityId: string, opp:Oppor
                 <span onClick={
                     () => {
                         window.navigator.share({
-                            title : opp?.title + " | Badge",
-                            url : window.location.href
+                            title: opp?.title + " | Badge",
+                            url: window.location.href
                         })
                     }
                 } className="tw-button-ghost mso cursor-pointer">share</span>
                 {!opp?.has_applied ? (
-                    !(timeLeft(opp?.expiry_date || "12-12-12") == "Expired") ? 
-                    <button onClick={() => modalRef.current?.open()} className="tw-button cursor-pointer">
-                        Apply Now
-                    </button>
-                    : <span></span>
+                    !(timeLeft(opp?.expiry_date || "12-12-12") == "Expired") ?
+                        <button onClick={() => modalRef.current?.open()} className="tw-button cursor-pointer">
+                            Apply Now
+                        </button>
+                        : <span></span>
 
                 ) : (
-                    <span className={`tw-tag scale-105 rounded-md! py-2 px-3 ${currentApplication?.status === 'Accepted' ? 'bg-green-100/5 text-green-500' :
+                    <span onClick={juscheck} className={`tw-tag scale-105 rounded-md! py-2 px-3 ${currentApplication?.status === 'Accepted' ? 'bg-green-100/5 text-green-500' :
                         currentApplication?.status === 'Rejected' ? 'bg-red-100/5 text-red-500' :
                             'bg-blue-100/5 text-blue-700'
                         }`}>

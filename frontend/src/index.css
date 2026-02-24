@@ -236,7 +236,7 @@ table *.tw-button, table *.tw-button-secondary {
 }
 
 @utility tw-tag{
-  @apply text-xs bg-foreground/7 text-foreground rounded-full px-2 py-1 group-hover:text-white;
+  @apply text-xs bg-foreground/7 text-foreground rounded-full px-2 py-1 group-hover:text-white text-nowrap;
 }
 @utility tw-dashboard-grid{
   @apply grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4;
