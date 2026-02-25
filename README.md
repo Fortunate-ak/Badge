@@ -116,3 +116,10 @@ The system now supports Web Push Notifications for applicants.
 Global search functionality is available for Applicants.
 *   **Scope:** Filters Documents and Opportunities lists in real-time.
 *   **UI:** Accessible via the top navigation bar.
+
+### **6.3 Specific Document Requirements**
+Institutions can now request specific documents (e.g., "AWS Certified Solutions Architect") beyond general categories.
+*   **Opportunity Creation:** Institutions define a list of specific requirements (Label, Mandatory flag).
+*   **Application Flow:** Applicants are prompted to select a document from their vault for each requirement.
+*   **Validation:** The system enforces mandatory requirements and verifies document ownership before submission.
+*   **Backend:** `submitted_documents` JSONField on `Application` maps requirement IDs to Document IDs.
