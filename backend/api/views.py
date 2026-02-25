@@ -427,12 +427,19 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        queryset = Application.objects.none()
+
         if user.is_institution_staff:
              my_institutions = InstitutionStaff.objects.filter(user=user).values_list('institution', flat=True)
-             return Application.objects.filter(Q(opportunity__posted_by_institution__in=my_institutions) | Q(applicant=user)).distinct()
-        if user.is_applicant:
-            return Application.objects.filter(applicant=user)
-        return Application.objects.none()
+             queryset = Application.objects.filter(Q(opportunity__posted_by_institution__in=my_institutions) | Q(applicant=user)).distinct()
+        elif user.is_applicant:
+            queryset = Application.objects.filter(applicant=user)
+
+        opportunity_id = self.request.query_params.get('opportunity')
+        if opportunity_id:
+            queryset = queryset.filter(opportunity=opportunity_id)
+
+        return queryset
 
     def perform_create(self, serializer):
         opportunity = serializer.validated_data.get('opportunity')
