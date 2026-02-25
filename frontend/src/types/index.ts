@@ -113,6 +113,12 @@ export interface ConsentLog {
 /**
  * Represents an opportunity (Job, Program, etc.).
  */
+export interface SpecificRequirement {
+  id: string;
+  label: string;
+  mandatory: boolean;
+}
+
 export interface Opportunity {
   id: string;
   title: string;
@@ -131,6 +137,7 @@ export interface Opportunity {
   has_applied?: boolean;
   document_categories?: string[]; // Array of DocumentCategory IDs
   document_categories_details?:DocumentCategory[];
+  specific_requirements?: SpecificRequirement[];
 }
 
 export interface Applicant {
@@ -162,12 +169,14 @@ export interface Application {
   letter?: string;
   created_at: string;
   updated_at: string;
+  submitted_documents?: Record<string, string>;
 }
 
 export interface ApplicationDetail extends Application {
   opportunity: Opportunity;
   documents:Document[];
   match_record:MatchRecord;
+  submitted_documents_details?: Document[];
 }
 
 

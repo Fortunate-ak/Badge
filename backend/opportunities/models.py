@@ -25,6 +25,8 @@ class Opportunity(models.Model):
     
     document_categories = models.ManyToManyField(DocumentCategory, blank=True, related_name='opportunities', help_text="Document categories required for this opportunity")
 
+    specific_requirements = models.JSONField(default=list, blank=True, help_text="List of specific document requirements (e.g., [{'id': '1', 'label': 'AWS Cert', 'mandatory': True}])")
+
     start_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
 
@@ -53,6 +55,7 @@ class Application(models.Model):
     opportunity = models.ForeignKey(Opportunity, on_delete=models.CASCADE, related_name='applications')
     status = models.CharField(max_length=100, default='Submitted', choices=STATUS_TYPES)
     letter = models.TextField(blank=True, null=True, help_text="A motivational letter or additional info from the applicant.")
+    submitted_documents = models.JSONField(default=dict, blank=True, help_text="Map of requirement ID to Document ID for specific requirements")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

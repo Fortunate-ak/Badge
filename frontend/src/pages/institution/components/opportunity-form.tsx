@@ -1,5 +1,5 @@
 import useForm from "../../../ui/use-form";
-import type { DocumentCategory, Opportunity } from "../../../types";
+import type { DocumentCategory, Opportunity, SpecificRequirement } from "../../../types";
 import { useAuth } from "../../../context/AuthContext";
 import tags from "../../../assets/tags.json"
 import MultiSelect from "../../../ui/multi-select";
@@ -25,7 +25,8 @@ export default function OpportunityForm({
             start_date: "",
             expiry_date: "",
             posted_by_institution: user?.institution_details?.[0]?.id,
-            document_categories: []
+            document_categories: [],
+            specific_requirements: []
         }
     );
 
@@ -42,6 +43,23 @@ export default function OpportunityForm({
         onSubmit(values);
         console.log(values);
     };
+
+    const addRequirement = () => {
+        const newReq: SpecificRequirement = { id: Date.now().toString(), label: "", mandatory: false };
+        setValues({ ...values, specific_requirements: [...(values.specific_requirements || []), newReq] });
+    }
+
+    const removeRequirement = (index: number) => {
+        const reqs = [...(values.specific_requirements || [])];
+        reqs.splice(index, 1);
+        setValues({ ...values, specific_requirements: reqs });
+    }
+
+    const updateRequirement = (index: number, field: keyof SpecificRequirement, value: any) => {
+        const reqs = [...(values.specific_requirements || [])];
+        reqs[index] = { ...reqs[index], [field]: value };
+        setValues({ ...values, specific_requirements: reqs });
+    }
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -121,6 +139,50 @@ export default function OpportunityForm({
                     ))
                 }
             </select>
+
+            <div className="flex flex-col gap-2 p-4 border border-border rounded-md">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-semibold">Specific Document Requirements</h3>
+                    <button type="button" onClick={addRequirement} className="tw-button-secondary text-xs">
+                        + Add Requirement
+                    </button>
+                </div>
+
+                {values.specific_requirements?.length === 0 && (
+                    <p className="text-sm text-muted italic">No specific requirements added.</p>
+                )}
+
+                <div className="flex flex-col gap-2">
+                    {values.specific_requirements?.map((req, index) => (
+                        <div key={req.id} className="flex flex-row gap-2 items-center">
+                            <input
+                                type="text"
+                                className="tw-input flex-1 py-1"
+                                placeholder="e.g. AWS Certified Solutions Architect"
+                                value={req.label}
+                                onChange={(e) => updateRequirement(index, 'label', e.target.value)}
+                                required
+                            />
+                            <label className="flex items-center gap-1 text-sm whitespace-nowrap">
+                                <input
+                                    type="checkbox"
+                                    checked={req.mandatory}
+                                    onChange={(e) => updateRequirement(index, 'mandatory', e.target.checked)}
+                                    className="tw-checkbox"
+                                />
+                                Mandatory
+                            </label>
+                            <button
+                                type="button"
+                                onClick={() => removeRequirement(index)}
+                                className="tw-button-ghost text-red-500 hover:text-red-700"
+                            >
+                                <span className="mso">delete</span>
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
             <button type="submit" className="tw-button cursor-pointer">
                 {opportunity ? "Update" : "Create"} Opportunity

@@ -75,7 +75,7 @@ export default function OpportunityViewPage() {
             <div className="flex flex-row justify-between items-center mb-1">
                 <span className="text-sm text-foreground/50">Posted {timeAgo(value?.updated_at || "12-12-12")}</span>
                 {
-                    id ? <ActionButton opp={value} opportunityId={id} /> : null
+                    id ? <ActionButton opp={value} opportunityId={id} userDocs={docs} /> : null
                 }
 
 
@@ -121,8 +121,9 @@ export default function OpportunityViewPage() {
  * If the user has editing rights, it returns an "edit" span.
  * @returns the correct action button
  */
-function ActionButton({ opportunityId, opp }: { opportunityId: string, opp: Opportunity | null }) {
+function ActionButton({ opportunityId, opp, userDocs }: { opportunityId: string, opp: Opportunity | null, userDocs: Document[] }) {
     const [letter, setLetter] = useState("");
+    const [submittedDocs, setSubmittedDocs] = useState<Record<string, string>>({});
     const [currentApplication, setCurrentApplication] = useState<ApplicationDetail | null>(null);
     const modalRef = useRef<ModalHandle | null>(null);
     const { user } = useAuth();
@@ -134,6 +135,16 @@ function ActionButton({ opportunityId, opp }: { opportunityId: string, opp: Oppo
 
 
     const applyNow = () => {
+        // Validation for specific requirements
+        if (opp?.specific_requirements) {
+            for (const req of opp.specific_requirements) {
+                if (req.mandatory && !submittedDocs[req.id]) {
+                    toast.error(`Please select a document for ${req.label}`);
+                    return;
+                }
+            }
+        }
+
         /** When an applicant applies we automatically consent for all non-consented document categories that the oppportunity requires.  */
         opportunityService.getById(opportunityId || "").then(async (opp_val) => {
             let categories_check = await consentService.check(opp_val.document_categories || [], opp_val.posted_by_institution, user?.id || "");
@@ -149,7 +160,7 @@ function ActionButton({ opportunityId, opp }: { opportunityId: string, opp: Oppo
                 toast.success("Consent granted for all required document categories.");
             }
         });
-        applicationService.apply(opportunityId || "", letter).then(() => {
+        applicationService.apply(opportunityId || "", letter, submittedDocs).then(() => {
             toast.success("Successfully applied to opportunity.");
             modalRef.current?.close();
             window.location.href = "";
@@ -213,7 +224,32 @@ function ActionButton({ opportunityId, opp }: { opportunityId: string, opp: Oppo
                         Please write a motivational letter to the institution. This will help them understand why you are a good fit for this opportunity.
                     </p>
                     <SimpleMDE value={letter} onChange={setLetter} />
-                    <div className="flex justify-end">
+
+                    {opp?.specific_requirements && opp.specific_requirements.length > 0 && (
+                        <div className="flex flex-col gap-2 border-t border-border pt-4">
+                             <h3 className="font-semibold">Required Specific Documents</h3>
+                             <p className="text-xs text-muted">Please select the specific documents requested by the institution from your vault.</p>
+                             {opp.specific_requirements.map(req => (
+                                 <div key={req.id} className="flex flex-col gap-1">
+                                     <label className="text-sm font-medium">
+                                         {req.label} {req.mandatory && <span className="text-red-500">*</span>}
+                                     </label>
+                                     <select
+                                         className="tw-select"
+                                         value={submittedDocs[req.id] || ""}
+                                         onChange={(e) => setSubmittedDocs({...submittedDocs, [req.id]: e.target.value})}
+                                     >
+                                         <option value="">Select a document...</option>
+                                         {userDocs.map(doc => (
+                                             <option key={doc.id} value={doc.id}>{doc.title}</option>
+                                         ))}
+                                     </select>
+                                 </div>
+                             ))}
+                        </div>
+                    )}
+
+                    <div className="flex justify-end mt-2">
                         <button onClick={() => applyNow()} className="tw-button cursor-pointer">
                             Submit Application
                         </button>

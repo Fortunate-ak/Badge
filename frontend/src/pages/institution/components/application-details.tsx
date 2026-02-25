@@ -114,6 +114,38 @@ export default function ApplicationDetails() {
                     }
                 </div>
 
+                {application.opportunity.specific_requirements && application.opportunity.specific_requirements.length > 0 && (
+                    <>
+                        <hr />
+                        <h2 className="text-xl font-bold mt-4">Specific Requirements</h2>
+                        <div className="flex flex-col gap-4 my-4">
+                            {application.opportunity.specific_requirements.map(req => {
+                                const docId = application.submitted_documents?.[req.id];
+                                const doc = application.submitted_documents_details?.find(d => d.id === docId);
+
+                                return (
+                                    <div key={req.id} className="border border-border rounded-md p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                                        <div className="flex flex-col">
+                                            <p className="font-semibold text-sm">{req.label}</p>
+                                            <span className={`text-xs ${req.mandatory ? 'text-red-500' : 'text-gray-500'}`}>
+                                                {req.mandatory ? 'Mandatory' : 'Optional'}
+                                            </span>
+                                        </div>
+
+                                        {doc ? (
+                                            <div className="w-full md:w-auto">
+                                                <DocumentMiniCard value={doc} />
+                                            </div>
+                                        ) : (
+                                            <span className="text-muted text-sm italic">No document submitted.</span>
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </>
+                )}
+
                 <hr />
                 <h2 className="text-xl font-bold mt-4">Match Analytics</h2>
                 <div className="flex flex-col gap-2 *:text-sm">
