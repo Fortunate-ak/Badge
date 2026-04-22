@@ -62,7 +62,7 @@
 
 ### 📐 Type Safety
 - **Sync Requirement**: The frontend types in `frontend/src/types/index.ts` **must** strictly mirror the backend Django models and Serializers.
-- **Action**: If you modify a backend model, you **must** immediately update the corresponding TypeScript interface.
+- **Action**: If you modify a backend model, or maybe you see a mismatch in the frontend, you **must** immediately update the corresponding TypeScript interface.
 
 ## 4. Backend Guidelines
 
