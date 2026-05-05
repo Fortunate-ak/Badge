@@ -101,6 +101,7 @@ export interface Verification {
 export interface ConsentLog {
   id: string;
   applicant: string|number; // User ID
+  applicant_details?: User;
   requester_institution: string; // Institution ID
   document_categories: string[]; // Array of DocumentCategory IDs
   is_granted: boolean;
@@ -109,6 +110,7 @@ export interface ConsentLog {
   document_categories_details?:DocumentCategory[];
   requester_institution_details?:Institution;
 }
+
 
 /**
  * Represents an opportunity (Job, Program, etc.).

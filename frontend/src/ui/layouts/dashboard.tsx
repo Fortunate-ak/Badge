@@ -92,7 +92,9 @@ function Navigations() {
         <NavItem title="Home (Opportunities)" icon="home" path="/institution" />
         <NavItem title="Applicants" icon="group" path='/institution/staff' />
         <NavItem title="Verifications" icon="order_approve" path='/institution/documents' />
+        <NavItem title="Consents" icon="fact_check" path='/institution/consent' />
         <NavItem title="Developer API" icon="api" path='/institution/developer' />
+
         <NavItem title="Profile" icon="person" path={user?.institution_details && user.institution_details.length > 0 ? `/institution/${user.institution_details[0].id}` : "/institution/create"} />
     </>
 

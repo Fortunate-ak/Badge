@@ -61,11 +61,13 @@ class ConsentLogSerializer(serializers.ModelSerializer):
     """
     document_categories_details = DocumentCategorySerializerMini(source='document_categories', read_only=True, many=True)
     requester_institution_details = SimpleInstitutionSerializer(source="requester_institution", read_only=True)
+    applicant_details = UserMiniSerializer(source='applicant', read_only=True)
     class Meta:
         model = ConsentLog
         fields = [
-            'id', 'applicant', 'requester_institution', 'document_categories',
+            'id', 'applicant', 'applicant_details', 'requester_institution', 'document_categories',
             'is_granted', 'created_at', 'revoked_at', 'document_categories_details', 'requester_institution_details'
         ]
-        read_only_fields = ['id', 'created_at', 'document_categories_details', 'requester_institution_details']
+        read_only_fields = ['id', 'created_at', 'document_categories_details', 'requester_institution_details', 'applicant_details']
+
 

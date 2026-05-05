@@ -299,8 +299,9 @@ class ConsentLogViewSet(viewsets.ModelViewSet):
         consent.save()
         return Response({'status': 'Consent revoked.'})
     
-    @action(detail=True, methods=['get'], url_path='accept')
+    @action(detail=True, methods=['post'], url_path='accept')
     def accept(self, request, pk=None):
+
         consent = self.get_object()
         if consent.applicant != request.user:
              return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)

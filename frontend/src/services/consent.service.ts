@@ -24,7 +24,7 @@ export const consentService = {
 
     accept: async (id: string): Promise<{status:string}> => {
         const response = await customFetch(`${API_URL}/consent-logs/${id}/accept/`, {
-            method: "GET",
+            method: "POST",
         });
         if (!response.ok) throw await response.json();
         return response.json();
@@ -32,11 +32,12 @@ export const consentService = {
 
     revoke: async (id: string): Promise<{status:string}> => {
         const response = await customFetch(`${API_URL}/consent-logs/${id}/revoke/`, {
-            method: "GET",
+            method: "POST",
         });
         if (!response.ok) throw await response.json();
         return response.json();
     },
+
 
     check: async (document_categories: string[], institution_id : string, applicant_id : string): Promise<{[s: string]: boolean}> => {
         const response = await customFetch(`${API_URL}/consent-logs/check/`, {
@@ -52,7 +53,15 @@ export const consentService = {
         return response.json();
     },
 
+    deny: async (id: string): Promise<void> => {
+        const response = await customFetch(`${API_URL}/consent-logs/${id}/`, {
+            method: "DELETE",
+        });
+        if (!response.ok) throw await response.json();
+    },
+
     create: async (data: Partial<ConsentLog>): Promise<ConsentLog> => {
+
         const response = await customFetch(`${API_URL}/consent-logs/`, {
             method: "POST",
             headers: {
