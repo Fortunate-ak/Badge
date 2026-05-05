@@ -64,7 +64,7 @@ export default function Register() {
             subtitle="Start your journey with verified credentials."
         >
              {/* Account Type Toggle */}
-             <div className="bg-secondary/50 p-1 rounded-lg flex mb-6 relative border border-border/50 hidden">
+             <div className="bg-secondary/50 p-1 rounded-lg flex mb-6 relative border border-border/50">
                 <button
                     type="button"
                     onClick={() => setAccountType("applicant")}

@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie, csrf_exempt
 from .serializers import UserSerializer, RegisterSerializer, PushSubscriptionSerializer
 from rest_framework import viewsets, status
 from .models import PushSubscription
@@ -31,7 +31,7 @@ def api_register(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
-@csrf_protect
+@csrf_exempt
 @permission_classes([AllowAny])
 def api_login(request):
     email = request.data.get('email')

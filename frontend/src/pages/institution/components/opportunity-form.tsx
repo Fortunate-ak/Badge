@@ -113,32 +113,36 @@ export default function OpportunityForm({
                 <input type="date" onChange={handleChange} name="expiry_date" placeholder="Expiry Date" className="tw-input" required />
             </div>
 
-            <select
-                name="posted_by_institution"
-                id="posted_by_institution"
-                value={values.posted_by_institution}
-                onChange={handleChange}
-                className="tw-input"
-            >
-                <option value="">Select Institution</option>
-                {
-                    user?.institution_details?.map((inst) => (
-                        <option key={inst.id} value={inst.id}>{inst.name}</option>
-                    ))
-                }
-            </select>
+            {user?.institution_details && user.institution_details.length > 0 ? (
+                <select
+                    name="posted_by_institution"
+                    id="posted_by_institution"
+                    value={values.posted_by_institution}
+                    onChange={handleChange}
+                    className="tw-input"
+                    required
+                >
+                    <option value="">Select Institution</option>
+                    {
+                        user.institution_details.map((inst) => (
+                            <option key={inst.id} value={inst.id}>{inst.name}</option>
+                        ))
+                    }
+                </select>
+            ) : (
+                <div className="p-3 bg-yellow-50 text-yellow-800 rounded-md border border-yellow-200 text-sm flex flex-col gap-2">
+                    <p><strong>Missing Institution Profile:</strong> You must create an institution profile before you can post an opportunity.</p>
+                    <a href="/institution/create" className="text-yellow-900 underline font-medium w-fit">Click here to create your institution (e.g. University, Company)</a>
+                </div>
+            )}
 
 
-            <select name="document_categories" multiple required onChange={(e) => {
-                const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
-                setValues({ ...values, document_categories: selectedOptions });
-            }} className="tw-input">
-                <option disabled value="">Select Documents Categories</option>
-                {
-                    categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))
-                }
-            </select>
+            <MultiSelect
+                options={categories.map(c => ({ label: c.name, value: c.id }))}
+                value={values.document_categories}
+                onChange={(v) => setValues({ ...values, document_categories: v })}
+                placeholder="Select Documents Categories"
+            />
 
             <div className="flex flex-col gap-2 p-4 border border-border rounded-md">
                 <div className="flex justify-between items-center">

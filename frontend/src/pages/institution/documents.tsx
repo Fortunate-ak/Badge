@@ -7,6 +7,7 @@ import MinimalModal, { type ModalHandle } from "../../ui/layouts/modal";
 import { institutionService } from "../../services/institution.service";
 import useForm from "../../ui/use-form";
 import { documentService } from "../../services/document.service";
+import MultiSelect from "../../ui/multi-select";
 
 export default function InstitutionDocuments() {
     const [verifications, setVerifications] = useState<Verification[]>([]);
@@ -62,15 +63,21 @@ export default function InstitutionDocuments() {
          }
          const toastId = toast.loading("Uploading and verifying...");
          try {
-             await documentService.upload(values.file, values.title, values.categories, verifiedApplicant.id);
+             await documentService.upload(values.file, values.title, values.categories, verifiedApplicant.id, values.type);
              toast.update(toastId, { type: 'success', message: "Document uploaded and verified" });
              uploadModalRef.current?.close();
              // Reset form
              setValues({ title: "", type: "PDF", applicant_email: "", categories: [], file: null });
              setVerifiedApplicant(null);
              fetchVerifications();
-         } catch(e) {
-             toast.update(toastId, { type: 'error', message: "Upload failed" });
+         } catch(err: any) {
+             console.error(err);
+             let errorMsg = "Upload failed";
+             if (err && typeof err === 'object') {
+                 const msgs = Object.entries(err).map(([key, val]) => `${key}: ${val}`);
+                 if (msgs.length > 0) errorMsg = msgs.join('\n');
+             }
+             toast.update(toastId, { type: 'error', message: errorMsg });
          }
     };
 
@@ -253,12 +260,12 @@ export default function InstitutionDocuments() {
 
                     <div>
                         <label className="text-sm font-bold">Categories</label>
-                        <select name="categories" multiple required onChange={(e) => {
-                            const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
-                            setValues({ ...values, categories: selectedOptions });
-                        }} className="tw-input h-24">
-                            {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
-                        </select>
+                        <MultiSelect
+                            options={categories.map(c => ({ label: c.name, value: c.id }))}
+                            value={values.categories}
+                            onChange={(v) => setValues({ ...values, categories: v })}
+                            placeholder="Select Categories"
+                        />
                     </div>
                     
                     <div>

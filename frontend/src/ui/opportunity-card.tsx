@@ -2,9 +2,15 @@ import { useNavigate } from "react-router"
 import { timeLeft } from "../utils";
 
 
-export default function OpportunityCard({ id, title, description, tags, company, logo, expiry_date }: { id: string, title: string, description: string, tags: string[], company: string, logo?: string, expiry_date?: string }) {
+export default function OpportunityCard({ id, title, description, tags, company, logo, expiry_date, match_score }: { id: string, title: string, description: string, tags: string[], company: string, logo?: string, expiry_date?: string, match_score?: number }) {
     const navigate = useNavigate();
-    return <div onClick={() => navigate(`/opportunities/${id}`)} className="p-4 border border-border rounded-md bg-secondary flex flex-col cursor-pointer transition-all **:transition-all">
+    return <div onClick={() => navigate(`/opportunities/${id}`)} className="p-4 border border-border rounded-md bg-secondary flex flex-col cursor-pointer transition-all **:transition-all relative group overflow-hidden">
+        {match_score !== undefined && (
+            <div className="absolute top-0 right-0 bg-primary text-white px-2 py-1 text-[0.6rem] font-bold rounded-bl-lg flex flex-row items-center gap-1 shadow-sm">
+                <span className="mso text-xs filled">stars</span>
+                {Math.round(match_score * 100)}% Match
+            </div>
+        )}
         <div className="flex flex-row items-center">
             {logo && <img src={logo} className="size-8 rounded-full mr-2 bg-primary/10 p-1" />}
             <div className="flex flex-col *:m-0">
@@ -12,7 +18,7 @@ export default function OpportunityCard({ id, title, description, tags, company,
                 <span className="text-[0.7rem] text-muted mb-0">{timeLeft(expiry_date || "")}</span>
             </div>
         </div>
-        <h2 className="text-xl font-bold md:line-clamp-1">{title}</h2>
+        <h2 className="text-xl font-bold md:line-clamp-1 mt-2">{title}</h2>
         <p className="line-clamp-3 text-sm">
             {description}
         </p>

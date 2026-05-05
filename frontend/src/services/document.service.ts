@@ -33,10 +33,12 @@ export const documentService = {
    * Uploads a new document.
    * Note: Uses FormData for file upload.
    */
-  async upload(file: File, title: string, categories: string[], applicantId?: string): Promise<Document> {
+  async upload(file: File, title: string, categories: string[], applicantId?: string, type?: string, content?: string): Promise<Document> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
+    if (type) formData.append('type', type);
+    if (content) formData.append('content', content);
     categories.forEach(cat => formData.append('categories', cat));
     if (applicantId) {
       formData.append('applicant', applicantId);

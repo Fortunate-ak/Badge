@@ -82,6 +82,7 @@ function Navigations() {
     if (user && !user.is_institution_staff && !location.pathname.includes("institution")) return <>
         <NavItem title="Home (Documents)" icon="home" path="/applicant" />
         <NavItem title="Opportunities" icon="explore" path='/opportunities' />
+        <NavItem title="My Applications" icon="description" path='/applicant/applications' />
         <NavItem title="Consent" icon="order_approve" path='/applicant/consent' />
         <NavItem title="Profile" icon="person" path='/applicant/profile' />
     </>
@@ -92,7 +93,7 @@ function Navigations() {
         <NavItem title="Applicants" icon="group" path='/institution/staff' />
         <NavItem title="Verifications" icon="order_approve" path='/institution/documents' />
         <NavItem title="Developer API" icon="api" path='/institution/developer' />
-        <NavItem title="Profile" icon="person" path={`/institution/${user?.institution_details?.[0]?.id || ""}`} />
+        <NavItem title="Profile" icon="person" path={user?.institution_details && user.institution_details.length > 0 ? `/institution/${user.institution_details[0].id}` : "/institution/create"} />
     </>
 
 
@@ -114,11 +115,11 @@ function NavItem({ title, icon, path = "" }: { title: string, icon: string, path
 
 function ProfileButton() {
     const { user } = useAuth()
-    return <div title={user?.first_name + " " + user?.last_name} className='overflow-x-clip w-full flex items-center justify-center'>
+    return <div title={user ? `${user.first_name} ${user.last_name}` : "Profile"} className='overflow-x-clip w-full flex items-center justify-center'>
         {
             user?.profile_image ? <img src={user?.profile_image} alt="Profile" className={'rounded-full size-8 object-cover border-2' + (user?.is_institution_staff ? "border-primary" : "border-border")} />
             : <div className={'rounded-full size-8 text-sm flex items-center justify-center p-2 bg-secondary text-foreground border border-border ' + (user?.is_institution_staff ? "bg-primary! text-white" : "")}>
-                {user?.first_name[0]}
+                {user?.first_name?.[0]?.toUpperCase() || "U"}
             </div>
         }
     </div>

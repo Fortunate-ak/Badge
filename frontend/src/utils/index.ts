@@ -55,14 +55,15 @@ const intervals: { label: string; seconds: number }[] = [
 ];
 
 export function timeAgo(input: Date | string | number): string {
+  if (!input) return "—";
   const now = new Date();
   const date = new Date(input);
 
-  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (isNaN(seconds)) {
-    throw new Error("Invalid date passed to timeAgo()");
+  if (isNaN(date.getTime())) {
+    return "—";
   }
+
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   for (const interval of intervals) {
     const count = Math.floor(seconds / interval.seconds);
@@ -76,15 +77,15 @@ export function timeAgo(input: Date | string | number): string {
 
 
 export function timeLeft(input: Date | string | number): string {
-  console.log("Tiem Left", input)
+  if (!input) return "No deadline";
   const now = new Date();
   const date = new Date(input);
 
-  const seconds = Math.floor((date.getTime() - now.getTime()) / 1000);
-
-  if (isNaN(seconds)) {
-    throw new Error("Invalid date passed to timeAgo()");
+  if (isNaN(date.getTime())) {
+    return "Invalid date";
   }
+
+  const seconds = Math.floor((date.getTime() - now.getTime()) / 1000);
 
   for (const interval of intervals) {
     const count = Math.floor(seconds / interval.seconds);

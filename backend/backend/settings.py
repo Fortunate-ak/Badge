@@ -28,18 +28,18 @@ import os
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
 DEBUG = DJANGO_ENV != 'production'
-ALLOWED_HOSTS = ['badge-production.up.railway.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['badge-production.up.railway.app', 'fortunate-portfolio-eight.vercel.app', 'localhost', '127.0.0.1']
 
 # CORS and CSRF settings
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8085",
     "http://localhost:5173",
-] if DEBUG else ["https://badge-production.up.railway.app"]
+] if DEBUG else ["https://badge-production.up.railway.app", "https://fortunate-portfolio-eight.vercel.app"]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8085",
     "http://localhost:5173",
-] if DEBUG else ["https://badge-production.up.railway.app"]
+] if DEBUG else ["https://badge-production.up.railway.app", "https://fortunate-portfolio-eight.vercel.app"]
 
 SESSION_COOKIE_SECURE = False if DEBUG else True
 CSRF_COOKIE_SECURE = False if DEBUG else True

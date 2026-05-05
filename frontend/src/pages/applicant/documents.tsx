@@ -9,6 +9,7 @@ import { institutionService } from "../../services/institution.service";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { useSearch } from "../../context/SearchContext";
+import MultiSelect from "../../ui/multi-select";
 
 export default function Documents() {
     const { user } = useAuth()
@@ -126,15 +127,12 @@ export default function Documents() {
                 <input required onChange={handleChange} type="text" name="title" value={values.title} placeholder="Document Title" className="tw-input" />
                 <input required onChange={handleChange} type="text" name="type" value={values.type} placeholder="Document Type" className="tw-input" />
 
-                <select name="categories" multiple required onChange={(e) => {
-                    const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
-                    setValues({ ...values, categories: selectedOptions });
-                }} className="tw-input">
-                    {
-                        categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))
-                    }
-                </select>
+                <MultiSelect
+                    options={categories.map(c => ({ label: c.name, value: c.id }))}
+                    value={values.categories}
+                    onChange={(v) => setValues({ ...values, categories: v })}
+                    placeholder="Select Categories"
+                />
                 <input required onChange={(e) => {setValues({ ...values, file: (e.target?.files || [])[0] || null })}} name="file" accept="application/pdf" type="file" className="tw-input cursor-pointer" />
                 <button type="submit" className="tw-button cursor-pointer">Upload Document</button>
             </form>
