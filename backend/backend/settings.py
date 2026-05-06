@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,9 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-3#*=%4l$=%^c9_=!u35ehb&_0()_6orepli(jtf!#i#!1!u1bu"
 
-
-
-import os
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
 DEBUG = DJANGO_ENV != 'production'
@@ -43,11 +41,10 @@ CSRF_TRUSTED_ORIGINS = [
 
 SESSION_COOKIE_SECURE = False if DEBUG else True
 CSRF_COOKIE_SECURE = False if DEBUG else True
+SESSION_COOKIE_SAMESITE = 'Lax' if DEBUG else 'None'
+CSRF_COOKIE_SAMESITE = 'Lax' if DEBUG else 'None'
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
-
-
-
 
 
 # Application definition
@@ -113,20 +110,22 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-import sys
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'project_apex'),
-        'USER': os.environ.get('POSTGRES_USER', 'user'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password'),
-    }
-}
+import dj_database_url
 
-# The database configuration is now consistent across all environments.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'project_apex'),
+            'USER': os.environ.get('POSTGRES_USER', 'user'),
+            'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password'),
+        }
+    }
 
 
 # Password validation
@@ -176,6 +175,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'accounts.User'
 
-# Add media config
+# Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "mediafiles"   # matches docker-compose mount /app/mediafiles
+MEDIA_ROOT = BASE_DIR / "mediafiles"

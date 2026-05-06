@@ -7,3 +7,4 @@ pillow
 word2vec
 ollama
 pywebpush
+dj-database-url
