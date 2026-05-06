@@ -1,5 +1,7 @@
 // frontend/src/utils/index.ts
 
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
+
 /**
  * Retrieves a cookie value by its name.
  * @param name The name of the cookie to retrieve.
@@ -11,7 +13,6 @@ export function getCookie(name: string): string | null {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
       if (cookie.substring(0, name.length + 1) === (name + '=')) {
         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
         break;
@@ -28,10 +29,8 @@ export function getCookie(name: string): string | null {
  * @returns A promise that resolves to the response.
  */
 export async function customFetch(url: string, options: RequestInit = {}): Promise<Response> {
-  // Add credentials to all requests
   options.credentials = 'include';
 
-  // Add CSRF token for methods that require it
   if (!['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(options.method?.toUpperCase() || '')) {
     const csrftoken = getCookie('csrftoken');
     if (csrftoken) {
@@ -41,7 +40,7 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
     }
   }
 
-  return fetch(url, options);
+  return fetch(`${API_BASE}${url}`, options);
 }
 
 const intervals: { label: string; seconds: number }[] = [
@@ -97,15 +96,10 @@ export function timeLeft(input: Date | string | number): string {
   return "Expired";
 }
 
-
-
-/// A function to generate a unique string ID, probably with a customizeable length
 export function generateUuid(): string {
-  // Check if the browser supports the Web Crypto API's randomUUID method
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   } else {
-    // Fallback for very old browsers (though not cryptographically secure)
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = Math.random() * 16 | 0;
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
